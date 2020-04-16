@@ -85,9 +85,12 @@
 
 
 \begin{document}
+	\title{Polynomial Time Competitive Repartitioning of Dynamic Graphs}
+	\author{Tobias Forner , {Technical University of Munich, Germany}}
 	
+	\maketitle
 	%title page
-	\input{title/title_page}	
+	%\input{title/title_page}	
 	
 	\thispagestyle{empty}
 	\begin{abstract}
@@ -99,12 +102,6 @@
 	\end{abstract}
 	
 	\clearpage
-	%plots for evaluation data, decomp tree with regular alpha
-	% A - cesar mocfe
-	% B - cesar nekbone First300k
-	% C -
-	% D - 
-	%total cost
 	\pgfplotstableread[row sep=\\,col sep=&]{
 		database & AdjDel 		& CoreDel & Adaptive & Static            \\
 		\dbA		 & 142317.400000	& 153223	& 254994.20000  & 54919.400000 \\
@@ -178,10 +175,6 @@
 	\clearpage
 }
 \pagenumbering{arabic} 
-
-%\setlength\intextsep{10cm}
-%\setlength{\floatsep}{2pt}
-
 
 	\section{Introduction}
 	
@@ -280,8 +273,7 @@
 	
 	They also show a lower bound of $k-1$ for the competitive ratio of any online algorithm for the Dynamic Balanced Graph Partitioning problem on two clusters via a reduction to online paging. 
 	
-	Furthermore they show that no $\delta$-augmented deterministic online algorithm can achieve a competitive ratio smaller than $k$ for any augmentation $\delta<l$. %We discovered flaws in their competitive analysis which makes us question their results. These flaws are discussed in greater detail in \cref{flawsSection}. 
-	
+	Furthermore they show that no $\delta$-augmented deterministic online algorithm can achieve a competitive ratio smaller than $k$ for any augmentation $\delta<l$.	
 	
 	\subsection{Restricted Variants of Balanced RePartitioning}
 	Restricted variants of the Balanced RePartitioning problem have also been studied. Here one assumes certain restrictions of the input sequence $\sigma$ and then studies online algorithms for these cases. 
@@ -537,22 +529,7 @@
 	\cref{exOldCrep} illustrates an example of this challenge mentioned above for the \adjDel{} approach. In the illustration it is assumed that $\alpha=3$ and $k=3$. In this case the input sequence leads \adjDel{} to first merge nodes 1 and 2 at time $t=3$ and then to add node 3 to the resulting component at time $t= 6$. The next two requests do not quite lead to the merge of the node 4 with the component. Instead a series of requests follows where node 1 communicates with other nodes that are outside of its component without any merges. Note that this sequence can be extended until node $1$ has communicated with every node except from the nodes $1,2,3,4$. Finally the first 4 nodes are merged at time $t=15$ at which point the resulting component is deleted as well as \textit{all} edges in the sequence.
 	This means that the amount of adjacent edges that are reset may greatly exceed the amount of edges inside a deleted component.
 	
-	We show in our analysis in \cref{analysisSection} that this approach is valid and allows for a competitive ratio of $O(2/\epsilon\cdot k\log k)$.
-		
-	
-	%\section{Problems With Analysis in Previous Work}
-	%\label{flawsSection}
-	
-	
-	%In an older version (\cite{Avin2015}) of the paper mentioned above we have also discovered some problems. In this version a similar component structure is maintained and merges are performed similarly to our approach as upon the deletion of a component the algorithm not only deletes inner edges but also those that leave the component, i.e. all edges $e={u,v}$ are deleted where $u$ or $v$ are inside the component. However the additional deletions of edges that are leaving the component are not accounted for in the analysis. We show that this approach may lead to scenarios where the amount of edges that are deleted that leave the component may greatly exceed the amount of inner edges. We show in \cref{analysisSection} how the analysis can be adapted while preserving the competitive ratio.	
-	
-	
-	%\section{Algorithm Overview}
-	%In this section we give an overview of our algorithm \crep{} which builds upon the ideas of \cite{Avin2015} and \cite{Avin2015}. Implementation details will be discussed in greater detail in \cref{implDetSection}.
-	
-	%\subsection{Overview}
-	%The algorithm maintains a second-order partitioning of the nodes into \textit{communication components} which are sets of nodes that communicated frequently. As more requests from the input sequence $\sigma$ are revealed to the algorithm the components grow in size until the algorithm discovers a component that is too large and hence decides to delete it.
-	
+	We show in our analysis in \cref{analysisSection} that this approach is valid and allows for a competitive ratio of $O(2/\epsilon\cdot k\log k)$.	
 	
 
 \section{Competitive Analysis of \adjDel{}}
@@ -683,7 +660,7 @@ We start the analysis by bounding the communication cost of \crep{} that is due 
 \end{lemma}
 
 \textit{Proof.} First note that due to \cref{mergeableLemma} \crep{} merges mergeable component sets as soon as they emerge.
-Whenever \crep{} performs a merge of a mergeable component set $S$, \cref{cut_lemma_upper} states that there was at most total edge weight $(|S|-1)\cdot\alpha$ between the merged components, i.e. $w(S)\leq(|S|-1)\cdot\alpha$. Each such merge decreases the number of components that need to be merged in order to form component $C$ by $|S|-1$. Hence \crep{} has payed at most $|C|\cdot\alpha$ communication cost for requests in $\core(C)$.\qed\nl%TODO think again about this lemma
+Whenever \crep{} performs a merge of a mergeable component set $S$, \cref{cut_lemma_upper} states that there was at most total edge weight $(|S|-1)\cdot\alpha$ between the merged components, i.e. $w(S)\leq(|S|-1)\cdot\alpha$. Each such merge decreases the number of components that need to be merged in order to form component $C$ by $|S|-1$. Hence \crep{} has payed at most $|C|\cdot\alpha$ communication cost for requests in $\core(C)$.\qed\nl
 
 We define $\finalWeights{}(\sigma)$ as the total amount of edge weight between the components $\finalComps{}(\sigma)$ which are present after the execution of \crep{} given input sequence $\sigma$.
 
@@ -701,7 +678,7 @@ Together with the fact that \crep{} pays for all requests in $\halo(C)$ for dele
 If component $C$ was deleted by \crep{} then also the edge weights corresponding to requests from $\halo(C)$ were reset to zero. All other edge weights were not changed. The remaining communication requests that have not been accounted for so far have either led to the creation of component $C\in\finalComps(\sigma)$ and are hence also bounded by $|C|\cdot\alpha$ or have not led \crep{} to any merge and are hence contained in $\finalWeights(\sigma)$. This concludes the proof.\qed\nl
 
 We continue our analysis by bounding the migration cost of \crep{} in the following lemma.
-%TODO specify base of the logarithm
+
 \begin{lemma}
 	\label{crep_mig_bound}
 	With augmentation $2+\epsilon$, \crep{} pays at most migration costs of
@@ -862,39 +839,6 @@ As the sets $core(C)$, $R(C)$ , $core(D)$ and $R(D)$ are disjoint for two differ
 \end{align*}
 \qed\nl
 
-\begin{comment}
-
-We continue the analysis of the lower bound on $\opt{}$ by bounding the cost of \opt{} due to requests we have not accounted for, namely those from $\core(C)$ and those from $R(C)$ for each deleted component $C$.
-
-\begin{lemma}
-	\label{core_r_lemma}
-	Consider only the requests of sequence $\sigma$ which are contained in $core(C)\cup R(C)$ for a deleted component $C\in\del(\sigma)$. Then \opt{} pays at least
-	\begin{align*}
-		\sum_{C\in\del(\sigma)}|C|/k\cdot\alpha+R(C)/k
-	\end{align*}
-	in the course of serving these requests.%this subsequence $\sigma'$ of $\sigma$.	
-\end{lemma}
-
-\textit{Proof.} For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. Note that the nodes involved in requests from $R(C)$ were not moved by \opt{} during the processing of requests from $R(C)$ until the time of deletion of $C$ as otherwise they would be assigned to an offline interval.
-
-The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+R(C)/\alpha$ since requests from $R(C)$ have not led \crep{} to perform any migrations. Because of this fact \opt{} must have placed those nodes on at least $\frac{|C|+R(C)/\alpha}{k}$ different servers. As \opt{} does not pay for any requests from $R$ it follows that \opt{} must have placed the nodes from $C$ in $\frac{|C|+R(C)/\alpha}{k}$ different servers.
-
-We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. In this case \opt{} must partition a graph containing the nodes from $C$ which are connected via edges representing the requests from $\core(C)$. As stated earlier \opt{} placed those nodes in $\frac{|C|+R(C)/\alpha}{k}$ different servers at time $\tau(C)$. As \crep{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} gives that \opt{} has to cut at least edges of total weight $\frac{|C|+R(C)/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+R(C)/k$.
-
-For the more general case in which \opt{} may perform node migrations during $\epoch(C)$ we adapt the graph construction from above as follows: we add a vertex representing each (node, time) pair from $\epoch(C)$.
-We connect each (node, time) pair $p$ with edges of weight $\alpha$ to the pairs of the same node that represent the time step directly before and directly after $p$ (if they exist in the graph). These edges represent the fact that \opt{} may choose to migrate a node between any two time steps in $\epoch(C)$.
-Additionally we add an edge of weight one for each request $r=\{u,v\}$ from $\core(C)$ by connecting the nodes in the graph that represent the pairs $(u,t)$ and $(v,t)$, respectively. \opt{} once again has to partition this graph into $\frac{|C|+R/\alpha}{k}$ parts.
-
-Note that we only added edges of weight $\alpha$ to the graph and hence this graph is also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight at least $\frac{|C|+R(C)/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+R(C)/k$.
-
-As the sets $core(C)$, $R(C)$ , $core(D)$ and $R(D)$ are disjoint per their definition we conclude that \opt{} has to pay at least cost 
-\begin{align*}
-\sum_{C\in\del(\sigma)}|C|/k\cdot\alpha+R(C)/k.
-\end{align*}
-\qed\nl
-
-\end{comment}
-
 In the following lemma we combine the results of the previous lemmas in order to bound the cost of \opt{} given input sequence $\sigma$, denoted by $\opt(\sigma)$.
 
 
@@ -922,42 +866,6 @@ Consider that due to \cref{offl_int_lemma} we have the inequality $o\geq|N|/k$. 
 \end{align*}
 
 This gives us the lemma.\qed
-
-\begin{comment}
-Let $P$ denote the set of edges from $\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that both \crep{} and \opt{} pay for and let $I$ denote the set of requests we have assigned to offline intervals.
-
-For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. Let $R(C)$ denote the set of requests from $\halo(C)$ that were not assigned to any offline interval. This means that the nodes involved in requests from $R(C)$ were not moved during the processing of requests from $R(C)$ until the time of deletion of $C$.
-
-The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+R(C)/\alpha$ since requests from $R(C)$ have not led \crep{} to perform any migrations. Because of this fact \opt{} must have placed those nodes on at least $\frac{|C|+R(C)/\alpha}{k}$ different servers. As \opt{} does not pay for any requests from $R$ it follows that \opt{} must have placed the nodes from $C$ in $\frac{|C|+R(C)/\alpha}{k}$ different servers.
-
-We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. In this case \opt{} must partition a graph containing the nodes from $C$ which are connected via edges representing the requests from $\core(C)$. This means that \opt{} must have placed those nodes on at least $\frac{|C|+R(C)/\alpha}{k}$ parts. As \crep{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} gives that \opt{} has to cut at least edges of total weight $\frac{|C|+R(C)/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+R(C)/k$.
-
-For the more general case in which \opt{} may perform node migrations during $\epoch(C)$ we adapt the graph construction from above as follows: we add a vertex representing each (node, time) pair from $\epoch(C)$.
-We connect each (node, time) pair $p$ with edges of weight $\alpha$ to the pairs of the same node that represent the time step directly before and directly after $p$ (if they exist in the graph). These edges represent the fact that \opt{} may choose to migrate a node between any two time steps in $\epoch(C)$.
-Additionally we add an edge of weight one for each request $r=\{u,v\}$ from $\core(C)$ by connecting the nodes in the graph that represent the pairs $(u,t)$ and $(v,t)$, respectively. \opt{} once again has to partition this graph into $\frac{|C|+R/\alpha}{k}$ parts.
-
-Note that we only added edges of weight $\alpha$ to the graph and hence this graph is also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight at least $\frac{|C|+R(C)/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+R(C)/k$.
-
-Finally we need to account for the fact that the migrations of nodes from $C$ that \opt{} performs also end offline intervals and might hence be accounted for twice in our analysis up to this point:
-
-\begingroup
-	\addtolength{\jot}{1em}
-
-	\begin{align*}
-		2\cdot\opt(\sigma)&\geq\sum_{(C\in\del{}(\sigma)}|C|/k\cdot\alpha+R(C)/k+I/(k\cdot\alpha)\cdot\alpha+|P|\\
-		&\geq\sum_{(C\in\del{}(\sigma)}|C|/k\cdot\alpha+\halo(C)/k
-	\end{align*}
-\endgroup
-
-where the last equality follows from the fact that 
-%TODO think about whether this is actually true, likely P is missing here 
-$\bigcup_{C\in\del(\sigma)}R(C)\cup I\cup P=\bigcup_{C\in\del(\sigma)}\halo(C)$ as the different $R(C)$ as well as $I$ and $P$ are disjoint.
-Hence the cost of \opt{} is at least
-\begin{align*}
-	1/2\cdot\sum_{(C\in\del{}(\sigma)}|C|/k\cdot\alpha+\halo(C)/k.
-\end{align*}\qed
-\end{comment}
-
 
 \subsection{Competitive Ratio}
 In this section we combine the results of \cref{crep_upper_bound} and \cref{opt_lower_bound} to obtain the following theorem which gives us the desired competitive ratio.
@@ -1139,16 +1047,6 @@ In the case of a collocation the nodes are moved to a cluster that has enough sp
 	\end{algorithmic}
 \end{algorithm}
 
-
-\begin{comment}
-\begin{itemize}
-	\item \cref{insertAndUpdate} calls the other routines as needed
-	\item \cref{updateDecomposition} starts at the smallest subgraph containing the nodes a and b in the decomposition tree and computes a new decomposition of the subgraph. Specifically it uses the decomposition approach from \cite{Chang2013} to decompose one subgraph and then also computes the subgraphs with the next higher connectivity and recurses until the connectivity has reached alpha.
-	\item updateMapping checks whether the alphaConnectedComponents were changed. If yes then it either collocates them if the resulting component is small enough or it adds the component to its return value. Then all the returned components are deleted, i.e. the edges connecting its nodes are deleted and the decomposition is recomputed
-	\item this deletion is performed by \cref{delComponents}
-\end{itemize}
-\end{comment}
-
 \subsection{On the Decomposition of a Subgraph}
 \label{decomp_desc}
 In this section we describe our algorithm for the decomposition of a given subgraph represented by a node in the decomposition tree. Specifically we describe the general idea behind our implementation of the subroutine \textit{decompose(treeNode, c)} which we have based on the algorithm described by Chang et al. (\cite{Chang2013}). In this algorithm $c$ denotes the connectivity that is the basis of this decomposition step.
@@ -1180,8 +1078,6 @@ In the following section we show that this decomposition can be implemented in p
 \subsection{Running Time}
 \label{run_time_sec}
 In this section we discuss the polynomial running time of an update of the decomposition tree after a new request has been received in our implementation of \adjDel{}.
-
-%\cref{run_time_theo} summarizes our result on the corresponding running time. 
 
 The main bottleneck of the algorithm lies in the decomposition updates. The following lemma shows a polynomial running time for these updates.
 The other parts of the algorithm can be implemented in polynomial time already.
@@ -1242,64 +1138,6 @@ For \static{} we first record the communication graph and give it as input to \s
 As input data we use several HPC traces (\dbALong{}, \dbBLong{}, \dbCLong{}), the nature of the data is described in more detail by Avin, Ghobadi, Griner and Schmid in \cite{Avin2019}. For the sake of readability we use the abbreviations NB for NeckBone and MG for MultiGrid.
 
 All data sets contain 1024 different communication nodes and are limited to the first 300 000 requests. The value of $\alpha$ is set to 6 and the algorithm was tasked to partition the nodes into 32 clusters of size 32 each, i.e. $k=l=32$. The dynamic algorithms are allowed to use augmentation with a factor of $2.1$, i.e. for the dynamic algorithms the maximum cluster capacities are $\lfloor32\cdot2.1\rfloor=67$.
-
-\begin{comment}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C,D},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=decomposition]{\totalcostplot};
-	\addplot table[x=database,y=ParMetis]{\totalcostplot};
-	\addplot table[x=database, y=Static]{\totalcostplot};
-	\legend{Decomposition, ParMetis, Static}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of total cost}\label{totalCostPlot}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C,D},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=750000,
-	ylabel={time in ms},
-	]
-	\addplot table[x=database,y=decomposition]{\runtimeplot};
-	\addplot table[x=database,y=ParMetis]{\runtimeplot};
-	\addplot table[x=database, y=Static]{\runtimeplot};
-	\legend{Decomposition, ParMetis, Static}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of run time}\label{runTimePlot}
-\end{figure}
-
-\end{comment}
 
 \subsection{Comparison of \adjDel{} and \coreDel{}}
 
@@ -1363,89 +1201,6 @@ Also note that both algorithms generally pay more for migrations than for commun
 	\end{tikzpicture}
 	\caption{comparison of the total cost of \adjDel{} (left) and \coreDel{} (right)}\label{costPlotCrep}
 \end{figure}
-
-
-\begin{comment}
-	
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=AdjDel]{\totalcostplot};
-	\addplot table[x=database,y=CoreDel]{\totalcostplot};
-	\legend{\adjDel{}, \coreDel{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the total cost of \adjDel{} and \coreDel{}}\label{totalCostPlotCrep}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=AdjDel]{\commcostplot};
-	\addplot table[x=database,y=CoreDel]{\commcostplot};
-	\legend{\adjDel{}, \coreDel{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the communication cost of \adjDel{} and \coreDel{}}\label{commCostPlotCrep}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=AdjDel]{\migcostplot};
-	\addplot table[x=database,y=CoreDel]{\migcostplot};
-	\legend{\adjDel{}, \coreDel{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the migration cost of \adjDel{} and \coreDel{}}\label{migCostPlotCrep}
-\end{figure}
-\end{comment}
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -1538,86 +1293,6 @@ These improvements come at a cost of running time as \cref{runTimePlotCrep2A} sh
 	\caption{comparison of the total cost of \adjDel{} (left) and \coreDel{} (right) in the case where merges are performed at connectivity $2\cdot\alpha$}\label{costPlotCrepTwoAlpha}
 \end{figure}
 
-\begin{comment}
-	
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=AdjDelDouble]{\totalcostplotTwoAlpha};
-	\addplot table[x=database,y=CoreDelDouble]{\totalcostplotTwoAlpha};
-	\legend{\adjDel{}, \coreDel{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the total cost of \adjDel{} and \coreDel{} in the case where merges are performed at connectivity $2\cdot\alpha$}\label{totalCostPlotCrep2A}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=AdjDelDouble]{\commcostplotTwoAlpha};
-	\addplot table[x=database,y=CoreDelDouble]{\commcostplotTwoAlpha};
-	\legend{\adjDel{}, \coreDel{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the communication cost of \adjDel{} and \coreDel{} in the case where merges are performed at connectivity $2\cdot\alpha$}\label{commCostPlotCrep2A}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=AdjDelDouble]{\migcostplotTwoAlpha};
-	\addplot table[x=database,y=CoreDelDouble]{\migcostplotTwoAlpha};
-	\legend{\adjDel{}, \coreDel{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the migration cost of \adjDel{} and \coreDel{} in the case where merges are performed at connectivity $2\cdot\alpha$}\label{migCostPlotCrep2A}
-\end{figure}
-\end{comment}
 
 \begin{figure}
 	\begin{tikzpicture}
@@ -1644,73 +1319,6 @@ These improvements come at a cost of running time as \cref{runTimePlotCrep2A} sh
 	\end{tikzpicture}
 	\caption{comparison of running time of \adjDel{} and \coreDel{} in the case where merges are performed at connectivity $2\cdot\alpha$}\label{runTimePlotCrep2A}
 \end{figure}
-
-
-
-\begin{comment}
-We will first discuss the overall results of our experiments, i.e. we will describe the quality of the results (see \cref{totalCostPlot}) as well as the running time needed for each examined algorithm (see \cref{runTimePlot}).\nl
-The static algorithm is shown to give the best results in the shortest time, but the low running was also to be expected as it is only called once as opposed to the 300 000 times the other algorithms need to decide whether they want to change their partitioning. The static algorithm also has knowledge of all requests and as a result is able to produce the best results. \nl
-For data set A our decomposition algorithm beats the adaptive ParMetis algorithm by a significant amount of about one third of the cost of the latter while ParMetis is significantly faster. For data sets B and C ParMetis is shown to produce slightly better results within drastically less computation time. It is worth mentioning that ParMetis uses the ... graph description format that does not allow for easy adaptation on the fly and needed to be recomputed after every request during our tests. However, we chose not to include this in the running time calculations.\nl
-	
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C,D},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=200000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=decomposition]{\commcostplot};
-	\addplot table[x=database,y=ParMetis]{\commcostplot};
-	\addplot table[x=database, y=Static]{\commcostplot};
-	\legend{Decomposition, ParMetis, Static}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of communication cost}\label{commCostPlot}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C,D},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=decomposition]{\migcostplot};
-	\addplot table[x=database,y=ParMetis]{\migcostplot};
-	\addplot table[x=database, y=Static]{\migcostplot};
-	\legend{Decomposition, ParMetis, Static}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of migration cost}\label{migCostPlot}
-\end{figure}
-
-In the next section we discuss the general distribution of the total costs of each algorithm to communication (see \cref{commCostPlot}) and migration costs (\cref{migCostPlot}).\nl
-Both ParMetis as well as our decomposition algorithm produce significantly more migration cost than communication cost while the static algorithm predominantly pays for communication. This shows that the dynamic algorithms tend to migrate too much while the static implementation is restricted to only migrate once to a static configuration it finds suitable and as a result has to pay more for communication. This also shows that there is potential to refine the dynamic implementations in such a way that they produce more balanced, and hopefully also less, cost overall.
-
-\end{comment}
 
 \subsection{Results of \adapt{} and \static}
 
@@ -1765,87 +1373,6 @@ Both ParMetis as well as our decomposition algorithm produce significantly more 
 	\end{tikzpicture}
 	\caption{comparison of the total cost of \adapt{} (left) and \static{} (right)}\label{costPlotMetis}
 \end{figure}
-
-\begin{comment}
-	
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=Adaptive]{\totalcostplot};
-	\addplot table[x=database,y=Static]{\totalcostplot};
-	\legend{\adapt{}, \static{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the total cost of \adapt{} and \static{}}\label{totalCostPlotMetis}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=Adaptive]{\commcostplot};
-	\addplot table[x=database,y=Static]{\commcostplot};
-	\legend{\adapt{}, \static{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the communication cost of \adapt{} and \static{}}\label{commCostPlotMetis}
-\end{figure}
-
-\begin{figure}
-	\begin{tikzpicture}
-	\begin{axis}[
-	ybar=7pt,
-	bar width=1.4cm,
-	enlarge x limits=0.25,
-	width=\textwidth,
-	height=.5\textwidth,
-	legend style={at={(0.5,-0.25)},
-		anchor=north,legend columns=-1},
-	symbolic x coords={A,B,C},
-	xtick=data,
-	xlabel={input set},
-	nodes near coords,
-	nodes near coords align={vertical},
-	ymin=0,ymax=370000,
-	ylabel={cost},
-	]
-	\addplot table[x=database,y=Adaptive]{\migcostplot};
-	\addplot table[x=database,y=Static]{\migcostplot};
-	\legend{\adapt{}, \static{}}
-	\end{axis}
-	\end{tikzpicture}
-	\caption{comparison of the migration cost of \adapt{} and \static{}}\label{migCostPlotMetis}
-\end{figure}
-\end{comment}
 
 
 
@@ -1910,7 +1437,7 @@ One such avenue for improvement may be to parallelize the computation of the dec
 
 \clearpage %move references to the back
 \addcontentsline{toc}{section}{References}
-\bibliographystyle{plain}
+\bibliographystyle{plainurl}
 \bibliography{../../Dropbox/ThesisPapers/ThesisBibTex}                             
 
 	
