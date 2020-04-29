@@ -596,14 +596,15 @@ The following lemma states that there is always at most one mergeable component 
 	\label{mergeableLemma}
 	At any time $t$ after \crep{} performed its merge and delete actions, all subsets $S$ of components with $|S|>1$ have connectivity less than $\alpha$, i.e. there exist no mergeable component sets after \crep{} performed its merges and deletions.
 \end{lemma}
-
-\textit{Proof.} We prove the lemma by an induction on steps. The lemma holds trivially at time 0.
-
-Now assume that at some time $t>0$ the lemma does not hold, i.e. there is a subset $S$ of components with connectivity at least $\alpha$ and $|S|>1$. We may assume that $t$ is the earliest time for which $S$ has connectivity $\alpha$.
-
-Then the incrementation of the weight of some edge $e$ at time $t$ raised the connectivity of $S$, but $S$ was not merged into a new $\alpha$-connected component $C$. If no new component was created at time $t$ we arrive at a contradiction as \crep{} always merges if there exists a mergeable component set.
-
-Now assume that a component $C$ was created at time $t$. This means that $C$ must also contain the endpoints of $e$. But then the conjunction of $C$ and $S$ forms an even larger subset of components with connectivity at least $\alpha$ which is a contradiction to the maximality of $C$ and $S$.\qed\nl
+\begin{proof}
+	We prove the lemma by an induction on steps. The lemma holds trivially at time 0.
+	
+	Now assume that at some time $t>0$ the lemma does not hold, i.e. there is a subset $S$ of components with connectivity at least $\alpha$ and $|S|>1$. We may assume that $t$ is the earliest time for which $S$ has connectivity $\alpha$.
+	
+	Then the incrementation of the weight of some edge $e$ at time $t$ raised the connectivity of $S$, but $S$ was not merged into a new $\alpha$-connected component $C$. If no new component was created at time $t$ we arrive at a contradiction as \crep{} always merges if there exists a mergeable component set.
+	
+	Now assume that a component $C$ was created at time $t$. This means that $C$ must also contain the endpoints of $e$. But then the conjunction of $C$ and $S$ forms an even larger subset of components with connectivity at least $\alpha$ which is a contradiction to the maximality of $C$ and $S$.
+\end{proof}
 
 
 The following lemma is adapted for our connectivity-based approach from Corollary 4.2 in \cite{Avin2015}.
@@ -613,7 +614,10 @@ The following lemma is adapted for our connectivity-based approach from Corollar
 	Fix any time $t$ and consider weights right after they were updated by \crep{} but before any merge or delete actions. Then all subsets $S$ of components with $|S|>1$ have connectivity at most $\alpha$ and a mergeable component set $S$ has connectivity exactly $\alpha$.
 \end{lemma}
 
-\textit{Proof.} This lemma follows directly from \cref{mergeableLemma} as connectivities can only increase by at most 1 at each time $t$ and \cref{mergeableLemma} guarantees that mergeable component sets are merged by \crep{} directly after they emerge before a new request is revealed.\qed\nl
+\begin{proof}
+	This lemma follows directly from \cref{mergeableLemma} as connectivities can only increase by at most 1 at each time $t$ and \cref{mergeableLemma} guarantees that mergeable component sets are merged by \crep{} directly after they emerge before a new request is revealed.
+\end{proof}
+
 
 The following two lemmas combined give us a result similar to Lemma 4.3 in \cite{Avin2015}: bounds on the edge weight that is cut when partitioning a mergeable component set, i.e. a set of components of connectivity at least $\alpha$.
 
@@ -623,16 +627,19 @@ We start by establishing a lower bound on this edge weight in the following lemm
 	\label{cut_lemma}
 	Given a mergeable set of components $S$ and a partition of $S$ into $g>1$ parts $S_1,...,S_g$. Then the weight between the parts of the partition is at least $g/2 \cdot \alpha$.
 \end{lemma}
-\textit{Proof.} We construct a graph $G$ with the different parts $S_i, i\in\{1,...,g\}$ of the partition as nodes. Note that this graph is $\alpha$-connected. We insert an edge for each edge between the parts $S_i$. Now consider the sum of the weighted degrees of all such nodes $S_i$ in the constructed graph:
-\begin{align*}
-\sum_{i\in\{1,...,g\}}deg_G(S_i)=2\sum_{e\in G}w(e)
-\end{align*}
-The equality follows as the left sum counts each edge twice, once for each endpoint.
-Now consider the fact that each node $S_i$ must have degree at least $\alpha$ with respect to the edges in $G$ because $G$ is $\alpha$-connected. Hence
-\begin{align*}
-2\sum_{e\in G}w(e)=\sum_{i\in\{1,...,g\}}deg_G(S_i)\leq\sum_{i\in\{1,...,g\}}\alpha=g\cdot\alpha
-\end{align*}
-which gives us that $\sum_{e\in G}w(e)\geq g/2\cdot\alpha$.\qed\nl
+
+\begin{proof}
+	We construct a graph $G$ with the different parts $S_i, i\in\{1,...,g\}$ of the partition as nodes. Note that this graph is $\alpha$-connected. We insert an edge for each edge between the parts $S_i$. Now consider the sum of the weighted degrees of all such nodes $S_i$ in the constructed graph:
+	\begin{align*}
+	\sum_{i\in\{1,...,g\}}deg_G(S_i)=2\sum_{e\in G}w(e)
+	\end{align*}
+	The equality follows as the left sum counts each edge twice, once for each endpoint.
+	Now consider the fact that each node $S_i$ must have degree at least $\alpha$ with respect to the edges in $G$ because $G$ is $\alpha$-connected. Hence
+	\begin{align*}
+	2\sum_{e\in G}w(e)=\sum_{i\in\{1,...,g\}}deg_G(S_i)\leq\sum_{i\in\{1,...,g\}}\alpha=g\cdot\alpha
+	\end{align*}
+	which gives us that $\sum_{e\in G}w(e)\geq g/2\cdot\alpha$.
+\end{proof}
 
 In the following lemma we establish the upper bound on the cut edge weight when partitioning a mergeable set of components $S$ into $g\geq2$ parts.
 
@@ -640,7 +647,11 @@ In the following lemma we establish the upper bound on the cut edge weight when 
 	\label{cut_lemma_upper}
 	Given a mergeable set of components $S$ and a partitioning of $S$ into $g\geq2$ parts $S_1,...,S_g$. The weight between the parts $S_i$ is at most $(g-1)\cdot\alpha$ during the execution of \crep{} (in the version \adjDel{}).
 \end{lemma}
-\textit{Proof.} Similarly to before we construct a graph $G=(V,E)$ with the different parts $S_i, i\in\{1,...,g\}$ of the partition as nodes and we insert an edge for each edge between the parts $S_i$. Note again that this graph is $\alpha$-connected. We iteratively partition $G$ into subsets via minimum cuts with regard to edge weight, i.e. we consider a minimum edge cut of $G$ which partitions the nodes of $G$ into the subsets $V_1$ and $V_2$. We continue to iteratively partition the resulting sets until all sets contain only one node of $G$ each. As this required at most $|V|-1$ cuts of value at most $\alpha$ and $|V|=g$ by definition of $G$ the lemma follows.\qed
+
+\begin{proof}
+	Similarly to before we construct a graph $G=(V,E)$ with the different parts $S_i, i\in\{1,...,g\}$ of the partition as nodes and we insert an edge for each edge between the parts $S_i$. Note again that this graph is $\alpha$-connected. We iteratively partition $G$ into subsets via minimum cuts with regard to edge weight, i.e. we consider a minimum edge cut of $G$ which partitions the nodes of $G$ into the subsets $V_1$ and $V_2$. We continue to iteratively partition the resulting sets until all sets contain only one node of $G$ each. As this required at most $|V|-1$ cuts of value at most $\alpha$ and $|V|=g$ by definition of $G$ the lemma follows.
+\end{proof}
+
 
 \subsection{Proof Overview}
 
@@ -689,8 +700,11 @@ We start the analysis by bounding the communication cost of \crep{} that is due 
 	With augmentation $2+\epsilon$, \crep{} pays at most communication cost $|C|\cdot\alpha$ for requests in $\core(C)$ where $C\in\del{}(\sigma)$.
 \end{lemma}
 
-\textit{Proof.} First note that due to \cref{mergeableLemma} \crep{} merges mergeable component sets as soon as they emerge.
-Whenever \crep{} performs a merge of a mergeable component set $S$, \cref{cut_lemma_upper} states that there was at most total edge weight $(|S|-1)\cdot\alpha$ between the merged components, i.e. $w(S)\leq(|S|-1)\cdot\alpha$. Each such merge decreases the number of components that need to be merged in order to form component $C$ by $|S|-1$. Hence \crep{} has payed at most $|C|\cdot\alpha$ communication cost for requests in $\core(C)$.\qed\nl
+\begin{proof}
+	First note that due to \cref{mergeableLemma} \crep{} merges mergeable component sets as soon as they emerge.
+	Whenever \crep{} performs a merge of a mergeable component set $S$, \cref{cut_lemma_upper} states that there was at most total edge weight $(|S|-1)\cdot\alpha$ between the merged components, i.e. $w(S)\leq(|S|-1)\cdot\alpha$. Each such merge decreases the number of components that need to be merged in order to form component $C$ by $|S|-1$. Hence \crep{} has payed at most $|C|\cdot\alpha$ communication cost for requests in $\core(C)$.
+\end{proof}
+
 
 We define $\finalWeights{}(\sigma)$ as the total amount of edge weight between the components $\finalComps{}(\sigma)$ which are present after the execution of \crep{} given input sequence $\sigma$.
 
@@ -704,8 +718,11 @@ Together with the fact that \crep{} pays for all requests in $\halo(C)$ for dele
 	\end{align*}
 \end{lemma}
 
-\textit{Proof.} The number of communication requests that led to the creation of a component $C$ is bounded by $|C|\cdot\alpha$ due to \cref{cut_lemma_upper}.
-If component $C$ was deleted by \crep{} then also the edge weights corresponding to requests from $\halo(C)$ were reset to zero. All other edge weights were not changed. The remaining communication requests that have not been accounted for so far have either led to the creation of component $C\in\finalComps(\sigma)$ and are hence also bounded by $|C|\cdot\alpha$ or have not led \crep{} to any merge and are hence contained in $\finalWeights(\sigma)$. This concludes the proof.\qed\nl
+\begin{proof}
+	The number of communication requests that led to the creation of a component $C$ is bounded by $|C|\cdot\alpha$ due to \cref{cut_lemma_upper}.
+	If component $C$ was deleted by \crep{} then also the edge weights corresponding to requests from $\halo(C)$ were reset to zero. All other edge weights were not changed. The remaining communication requests that have not been accounted for so far have either led to the creation of component $C\in\finalComps(\sigma)$ and are hence also bounded by $|C|\cdot\alpha$ or have not led \crep{} to any merge and are hence contained in $\finalWeights(\sigma)$. This concludes the proof.
+\end{proof}
+
 
 We continue our analysis by bounding the migration cost of \crep{} in the following lemma.
 
@@ -717,11 +734,14 @@ We continue our analysis by bounding the migration cost of \crep{} in the follow
 	\end{align*}
 \end{lemma}
 
-\textit{Proof.} First note that \crep{} only performs migrations when it merges components.
-We fix a component $C\in\del{}(\sigma)\cup \finalComps(\sigma)$ and bound the number of times each node of $C$ is moved as \crep{} processes the requests that led to the creation of $C$. 
+\begin{proof}
+	First note that \crep{} only performs migrations when it merges components.
+	We fix a component $C\in\del{}(\sigma)\cup \finalComps(\sigma)$ and bound the number of times each node of $C$ is moved as \crep{} processes the requests that led to the creation of $C$. 
+	
+	As \crep{} only reserves additional space $\lfloor\epsilon\cdot|B|\rfloor$ for each component $B$ and only moves component $B$ when a merge results in a component of size more than $(1+\epsilon)\cdot|B|$ each node of $C$ is moved at most
+	$(2/\epsilon+1)+\log k$ times. Summing over all nodes in $C$ that were actually moved by \crep{} bounds the number of migrations by $|C|\cdot((2/\epsilon+1) \log k)$ as components get deleted without migrations once they contain more than $k$ nodes. This leads to the desired bound on the migration costs as each node migration incurs cost $\alpha$ to \crep{}.
+\end{proof}
 
-As \crep{} only reserves additional space $\lfloor\epsilon\cdot|B|\rfloor$ for each component $B$ and only moves component $B$ when a merge results in a component of size more than $(1+\epsilon)\cdot|B|$ each node of $C$ is moved at most
-$(2/\epsilon+1)+\log k$ times. Summing over all nodes in $C$ that were actually moved by \crep{} bounds the number of migrations by $|C|\cdot((2/\epsilon+1) \log k)$ as components get deleted without migrations once they contain more than $k$ nodes. This leads to the desired bound on the migration costs as each node migration incurs cost $\alpha$ to \crep{}.\qed\nl
 
 Finally we summarize our results from \cref{crep_req_bound} and \cref{crep_mig_bound} in the following lemma in order to obtain the final upper bound on the cost of \crep{}.
 
@@ -734,15 +754,15 @@ Finally we summarize our results from \cref{crep_req_bound} and \cref{crep_mig_b
 	where $\comps(\sigma)=\del{}(\sigma)\cup\finalComps(\sigma)$.
 \end{lemma}
 
-\textit{Proof.} We sum the results from \cref{crep_req_bound} and \cref{crep_mig_bound} to obtain the lemma:
-\begin{align*}
-\crep(\sigma) & \leq \crep^{req} + \crep^{mig}\\
-& \leq \sum_{C\in\del{}(\sigma)}(|C|\cdot\alpha+|\halo(C)|)+\sum_{C\in \finalComps(\sigma)}|C|\cdot\alpha+\finalWeights(\sigma)\\ &+\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha\\
-&\leq 2\cdot\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha+\sum_{C\in\del{}(\sigma)}|\halo(C)|\\
-&+\finalWeights(\sigma).
-\end{align*}
-\qed
-
+\begin{proof}
+	We sum the results from \cref{crep_req_bound} and \cref{crep_mig_bound} to obtain the lemma:
+	\begin{align*}
+	\crep(\sigma) & \leq \crep^{req} + \crep^{mig}\\
+	& \leq \sum_{C\in\del{}(\sigma)}(|C|\cdot\alpha+|\halo(C)|)+\sum_{C\in \finalComps(\sigma)}|C|\cdot\alpha+\finalWeights(\sigma)\\ &+\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha\\
+	&\leq 2\cdot\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha+\sum_{C\in\del{}(\sigma)}|\halo(C)|\\
+	&+\finalWeights(\sigma).
+	\end{align*}
+\end{proof}
 
 
 \subsection{Lower Bound on \opt{}}
@@ -830,9 +850,12 @@ We start by bounding the total edge weight (the total number of requests) we ass
 	We assign at most $k\cdot\alpha$ requests from $N$ to any one offline interval.
 \end{lemma}
 
-\textit{Proof.} We fix an arbitrary offline interval of node $v$. Observe that none of the nodes involved in the assigned requests are moved by \opt{} during the offline interval, hence all the requests in question involve only nodes that \opt{} has placed on the same server as $v$ during the offline interval. 
+\begin{proof}
+	We fix an arbitrary offline interval of node $v$. Observe that none of the nodes involved in the assigned requests are moved by \opt{} during the offline interval, hence all the requests in question involve only nodes that \opt{} has placed on the same server as $v$ during the offline interval. 
+	
+	The number of such nodes is hence limited by the server capacity $k$. As we only examine requests from $\mathcal{H}$ we know that none of these requests have led \crep{} to perform any merges, hence there were at most $\alpha$ requests between $v$ and any one of the other nodes on its server during the offline interval. This bounds the number of requests assigned to the offline interval by $k\cdot\alpha$.
+\end{proof}
 
-The number of such nodes is hence limited by the server capacity $k$. As we only examine requests from $\mathcal{H}$ we know that none of these requests have led \crep{} to perform any merges, hence there were at most $\alpha$ requests between $v$ and any one of the other nodes on its server during the offline interval. This bounds the number of requests assigned to the offline interval by $k\cdot\alpha$.\qed\nl
 
 Let $R(C)$ denote the set of requests from $\halo(C)$ that were not assigned to any offline interval for a deleted component $C\in\del(\sigma)$.
 
@@ -849,25 +872,27 @@ We show the following lower bound on the cost of \opt{} for migrations from $\op
 	\end{align*}
 \end{lemma}
 
-\textit{Proof.} For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. Note that the nodes involved in requests from $R(C)$ were not moved by \opt{} during the processing of requests from $R(C)$ until the time of deletion of $C$ as otherwise they would be assigned to an offline interval.
+\begin{proof}
+	For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. Note that the nodes involved in requests from $R(C)$ were not moved by \opt{} during the processing of requests from $R(C)$ until the time of deletion of $C$ as otherwise they would be assigned to an offline interval.
+	
+	The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+|R(C)|/\alpha$ since requests from $R(C)$ have not led \crep{} to perform any migrations. Because of this fact \opt{} must have placed those nodes on at least $\frac{|C|+|R(C)|/\alpha}{k}$ different servers. As \opt{} does not pay for any requests from $R$ it follows that \opt{} must have placed the nodes from $C$ in $\frac{|C|+|R(C)|/\alpha}{k}$ different servers.
+	
+	We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. In this case \opt{} must partition a graph containing the nodes from $C$ which are connected via edges representing the requests from $\core(C)$. As stated earlier \opt{} placed those nodes in $\frac{|C|+|R(C)|/\alpha}{k}$ different servers at time $\tau(C)$. As \crep{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} gives that \opt{} has to cut at least edges of total weight $\frac{|C|+|R(C)|/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
+	
+	For the more general case in which \opt{} may perform node migrations during $\epoch(C)$ we adapt the graph construction from above as follows: we add a vertex representing each (node, time) pair from $\epoch(C)$.
+	We connect each (node, time) pair $p$ with edges of weight $\alpha$ to the pairs of the same node that represent the time step directly before and directly after $p$ (if they exist in the graph). These edges represent the fact that \opt{} may choose to migrate a node between any two time steps in $\epoch(C)$.
+	Additionally we add an edge of weight one for each request $r=\{u,v\}$ from $\core(C)$ by connecting the nodes in the graph that represent the pairs $(u,t)$ and $(v,t)$, respectively. \opt{} once again has to partition this graph into $\frac{|C|+|R(C)|/\alpha}{k}$ parts.
+	
+	Note that we only added edges of weight $\alpha$ to the graph and hence this graph is also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight at least $\frac{|C|+|R(C)|/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
+	
+	In both cases only edges representing either requests from $\optreq(C)$ or migrations from $\optmig(C)$ were cut.
+	
+	As the sets $core(C)$, $R(C)$ , $core(D)$ and $R(D)$ are disjoint for two different components $C,D\in\del(\sigma)$ per their definition we conclude that
+	\begin{align*}
+	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq |C|/k\cdot\alpha+|R(C)|/k.
+	\end{align*}
+\end{proof}
 
-The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+|R(C)|/\alpha$ since requests from $R(C)$ have not led \crep{} to perform any migrations. Because of this fact \opt{} must have placed those nodes on at least $\frac{|C|+|R(C)|/\alpha}{k}$ different servers. As \opt{} does not pay for any requests from $R$ it follows that \opt{} must have placed the nodes from $C$ in $\frac{|C|+|R(C)|/\alpha}{k}$ different servers.
-
-We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. In this case \opt{} must partition a graph containing the nodes from $C$ which are connected via edges representing the requests from $\core(C)$. As stated earlier \opt{} placed those nodes in $\frac{|C|+|R(C)|/\alpha}{k}$ different servers at time $\tau(C)$. As \crep{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} gives that \opt{} has to cut at least edges of total weight $\frac{|C|+|R(C)|/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
-
-For the more general case in which \opt{} may perform node migrations during $\epoch(C)$ we adapt the graph construction from above as follows: we add a vertex representing each (node, time) pair from $\epoch(C)$.
-We connect each (node, time) pair $p$ with edges of weight $\alpha$ to the pairs of the same node that represent the time step directly before and directly after $p$ (if they exist in the graph). These edges represent the fact that \opt{} may choose to migrate a node between any two time steps in $\epoch(C)$.
-Additionally we add an edge of weight one for each request $r=\{u,v\}$ from $\core(C)$ by connecting the nodes in the graph that represent the pairs $(u,t)$ and $(v,t)$, respectively. \opt{} once again has to partition this graph into $\frac{|C|+|R(C)|/\alpha}{k}$ parts.
-
-Note that we only added edges of weight $\alpha$ to the graph and hence this graph is also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight at least $\frac{|C|+|R(C)|/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
-
-In both cases only edges representing either requests from $\optreq(C)$ or migrations from $\optmig(C)$ were cut.
-
-As the sets $core(C)$, $R(C)$ , $core(D)$ and $R(D)$ are disjoint for two different components $C,D\in\del(\sigma)$ per their definition we conclude that
-\begin{align*}
-\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq |C|/k\cdot\alpha+|R(C)|/k.
-\end{align*}
-\qed\nl
 
 In the following lemma we combine the results of the previous lemmas in order to bound the cost of \opt{} given input sequence $\sigma$, denoted by $\opt(\sigma)$.
 
@@ -880,22 +905,25 @@ In the following lemma we combine the results of the previous lemmas in order to
 	\end{align*}
 \end{lemma}
 
-\textit{Proof.} We combine the results from \cref{offl_int_lemma} and \cref{opt_c_mig_req_lemma}. Note that the cost from \cref{opt_c_mig_req_lemma} may contain migration costs. In this case the corresponding migrations represent the end of an offline interval. We denote the number of offline intervals by $o$. This gives us that
+\begin{proof}
+	We combine the results from \cref{offl_int_lemma} and \cref{opt_c_mig_req_lemma}. Note that the cost from \cref{opt_c_mig_req_lemma} may contain migration costs. In this case the corresponding migrations represent the end of an offline interval. We denote the number of offline intervals by $o$. This gives us that
+	
+	\begin{align*}
+	2\opt{}(\sigma)\geq\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)+ o\cdot\alpha+|P|
+	\end{align*}
+	as we account for each migration at most twice.
+	
+	Consider that due to \cref{offl_int_lemma} we have the inequality $o\geq|N|/k$. We repeat that $\mathcal{H}=\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$. Note that $N$ is the subset of requests of $\mathcal{H}$ for which \opt{} does not pay while $P$ is the subset of $\mathcal{H}$ \opt{} pays for. It follows that the disjoint union of $N$ and $P$ is $\mathcal{H}$. Hence we obtain
+	
+	\begin{align*}
+	2\opt{}(\sigma)&\geq\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)+ o\cdot\alpha+|P|\\
+	&\geq\sum_{C\in\del(\sigma)}|C|/k\cdot\alpha+|R(C)|/k+(|N|+|P|)/k\\
+	&\geq \cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k.
+	\end{align*}
+	
+	This gives us the lemma.
+\end{proof}
 
-\begin{align*}
-2\opt{}(\sigma)\geq\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)+ o\cdot\alpha+|P|
-\end{align*}
-as we account for each migration at most twice.
-
-Consider that due to \cref{offl_int_lemma} we have the inequality $o\geq|N|/k$. We repeat that $\mathcal{H}=\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$. Note that $N$ is the subset of requests of $\mathcal{H}$ for which \opt{} does not pay while $P$ is the subset of $\mathcal{H}$ \opt{} pays for. It follows that the disjoint union of $N$ and $P$ is $\mathcal{H}$. Hence we obtain
-
-\begin{align*}
-2\opt{}(\sigma)&\geq\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)+ o\cdot\alpha+|P|\\
-&\geq\sum_{C\in\del(\sigma)}|C|/k\cdot\alpha+|R(C)|/k+(|N|+|P|)/k\\
-&\geq \cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k.
-\end{align*}
-
-This gives us the lemma.\qed
 
 \subsection{Competitive Ratio}
 In this section we combine the results of \cref{crep_upper_bound} and \cref{opt_lower_bound} to obtain the following theorem which gives us the desired competitive ratio.
@@ -905,30 +933,33 @@ In this section we combine the results of \cref{crep_upper_bound} and \cref{opt_
 	With augmentation $(2+\epsilon)$ the competitive ratio of \crep{} is in $O(2/\epsilon\cdot k \log k)$.
 \end{theorem}
 
-\textit{Proof.} We arbitrarily fix an input sequence $\sigma$ and use our previous results to bound the competitive ratio of \crep{}. We define $\comps(\sigma):=\del{}(\sigma)\cup\finalComps(\sigma)$ in order to improve readability. Let $P$ denote the set of edges from $\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that both \crep{} and \opt{} pay for.
-\begingroup
-\addtolength{\jot}{1em}
-\begin{align*}
-&\frac{\crep{}(\sigma)-\finalWeights(\sigma)}{\opt(\sigma)}\\ 
-&\leq\frac{2\cdot\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha +\sum_{C\in\del{}(\sigma)} |\halo(C)|}{1/2\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k +|P|}\\
-&\leq k \log k\frac{2\cdot\sum_{C\in\del(\sigma)}|C|\cdot(2/\epsilon+1) \cdot\alpha+\sum_{C\in\del{}(\sigma)}|\halo(C)|}{1/2\sum_{(C\in\del{}(\sigma)}|C|\cdot\alpha/2+|\halo(C)|)}+\beta\\
-& = O(2/\epsilon\cdot k \log k) +\beta
-\end{align*}
-\endgroup
+\begin{proof}
+	We arbitrarily fix an input sequence $\sigma$ and use our previous results to bound the competitive ratio of \crep{}. We define $\comps(\sigma):=\del{}(\sigma)\cup\finalComps(\sigma)$ in order to improve readability. Let $P$ denote the set of edges from $\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that both \crep{} and \opt{} pay for.
+	\begingroup
+	\addtolength{\jot}{1em}
+	\begin{align*}
+	&\frac{\crep{}(\sigma)-\finalWeights(\sigma)}{\opt(\sigma)}\\ 
+	&\leq\frac{2\cdot\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha +\sum_{C\in\del{}(\sigma)} |\halo(C)|}{1/2\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k +|P|}\\
+	&\leq k \log k\frac{2\cdot\sum_{C\in\del(\sigma)}|C|\cdot(2/\epsilon+1) \cdot\alpha+\sum_{C\in\del{}(\sigma)}|\halo(C)|}{1/2\sum_{(C\in\del{}(\sigma)}|C|\cdot\alpha/2+|\halo(C)|)}+\beta\\
+	& = O(2/\epsilon\cdot k \log k) +\beta
+	\end{align*}
+	\endgroup
+	
+	\noindent where
+	\begin{align*}
+	\beta=\sum_{C\in \finalComps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha
+	\end{align*}
+	
+	\noindent Let $\beta'=\beta+\finalWeights(\sigma)$. Then it follows that
+	
+	\begin{align*}
+	\frac{\crep{}(\sigma)}{\opt(\sigma)}\leq O(2/\epsilon\cdot k \log k) +\beta'.
+	\end{align*}
+	
+	To obtain the bound on $\beta'$ we observe that the components in $\finalComps(\sigma)$ each are of size at most $k$ since they were not deleted by \crep{}. This allows us to derive to bound $\sum_{C\in \finalComps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\leq l \cdot k \cdot ((2/\epsilon+1)+\log k)$. Since at the end of the execution of \crep{} there can be at most $k\cdot l$ components, \cref{cut_lemma_upper} allows us to bound $\finalWeights(\sigma)$ by $k\cdot l \cdot\alpha$. Hence we conclude that $\beta'\leq l\cdot k \cdot
+	((2/\epsilon+1)+\log k)\cdot\alpha+k\cdot l\cdot \alpha\in O(2/\epsilon\cdot k \log k)$.
+\end{proof}
 
-\noindent where
-\begin{align*}
-\beta=\sum_{C\in \finalComps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha
-\end{align*}
-
-\noindent Let $\beta'=\beta+\finalWeights(\sigma)$. Then it follows that
-
-\begin{align*}
-\frac{\crep{}(\sigma)}{\opt(\sigma)}\leq O(2/\epsilon\cdot k \log k) +\beta'.
-\end{align*}
-
-To obtain the bound on $\beta'$ we observe that the components in $\finalComps(\sigma)$ each are of size at most $k$ since they were not deleted by \crep{}. This allows us to derive to bound $\sum_{C\in \finalComps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\leq l \cdot k \cdot ((2/\epsilon+1)+\log k)$. Since at the end of the execution of \crep{} there can be at most $k\cdot l$ components, \cref{cut_lemma_upper} allows us to bound $\finalWeights(\sigma)$ by $k\cdot l \cdot\alpha$. Hence we conclude that $\beta'\leq l\cdot k \cdot
-((2/\epsilon+1)+\log k)\cdot\alpha+k\cdot l\cdot \alpha\in O(2/\epsilon\cdot k \log k)$.\qed\nl
 
 So far we have shown that \crep{} is competitive. In \cref{run_time_sec} we will show that our version \adjDel{} of \crep{} can be implemented in polynomial time.
 
@@ -1117,20 +1148,23 @@ The other parts of the algorithm can be implemented in polynomial time already.
 	The subroutine \textit{decompose} which decomposes a subgraph can be implemented in polynomial time $O(\alpha|V|^2|E|)$.
 \end{lemma}
 
-\textit{Proof.} The worst case is given when the whole tree has to be recomputed. We first discuss the time complexity of decomposing a single tree node $v$. Let the corresponding subgraph be denoted by $G_v=(V_v, E_v)$.
-Since each iteration of the subroutine \textit{decompose} performs at least one cut as long as the connectivity of the given graph is smaller than the current threshold $c$ we conclude that after at most $|V_v|$ iterations of decompose a correct decomposition is found. 
+\begin{proof}
+	The worst case is given when the whole tree has to be recomputed. We first discuss the time complexity of decomposing a single tree node $v$. Let the corresponding subgraph be denoted by $G_v=(V_v, E_v)$.
+	Since each iteration of the subroutine \textit{decompose} performs at least one cut as long as the connectivity of the given graph is smaller than the current threshold $c$ we conclude that after at most $|V_v|$ iterations of decompose a correct decomposition is found. 
+	
+	Each step of \textit{decompose} can be performed in $O(|V_v|\cdot|E_v|)$ as the maximum adjacency search algorithm finds an arbitrary minimum $(s,t)$-cut in time $O(|E_v|)$ as shown in theorem 4.1 in \cite{Chang2013} and as there are at most $|V_v|$ minimum $(s,t)$-cuts computed for each invocation of \textit{decompose}.
+	
+	Hence the complexity of decomposing the subgraph represented by a tree node $v$ is in $O(|V_v|^2|E_v|)$. Let $C_v$ denote the time needed for the decomposition of the subgraph represented  by decomposition tree node $v$.
+	
+	We now sum this complexity over the nodes for each connectivity level of the decomposition tree. To this end let $level(i)$ denote all nodes in the decomposition tree which are of connectivity exactly $i$.
+	
+	\begin{align*}
+	\sum_{i=0}^{\alpha}\sum_{v\in \text{level}(i)}C_v\leq\sum_{i=0}^{\alpha}O(|V|^2|E|)\in O(\alpha|V|^2|E|).
+	\end{align*}
+	
+	We conclude our analysis of the time complexity by observing the polynomial-time complexity of $O(\alpha|V|^2|E|)$.
+\end{proof}
 
-Each step of \textit{decompose} can be performed in $O(|V_v|\cdot|E_v|)$ as the maximum adjacency search algorithm finds an arbitrary minimum $(s,t)$-cut in time $O(|E_v|)$ as shown in theorem 4.1 in \cite{Chang2013} and as there are at most $|V_v|$ minimum $(s,t)$-cuts computed for each invocation of \textit{decompose}.
-
-Hence the complexity of decomposing the subgraph represented by a tree node $v$ is in $O(|V_v|^2|E_v|)$. Let $C_v$ denote the time needed for the decomposition of the subgraph represented  by decomposition tree node $v$.
-
-We now sum this complexity over the nodes for each connectivity level of the decomposition tree. To this end let $level(i)$ denote all nodes in the decomposition tree which are of connectivity exactly $i$.
-
-\begin{align*}
-\sum_{i=0}^{\alpha}\sum_{v\in \text{level}(i)}C_v\leq\sum_{i=0}^{\alpha}O(|V|^2|E|)\in O(\alpha|V|^2|E|).
-\end{align*}
-
-We conclude our analysis of the time complexity by observing the polynomial-time complexity of $O(\alpha|V|^2|E|)$.\qed\nl
 
 We conclude our analysis of the running time by observing that the remaining subroutines can be implemented in polynomial time which results in the following theorem on the running time.
 
@@ -1139,8 +1173,9 @@ We conclude our analysis of the running time by observing that the remaining sub
 	The algorithm \adjDel{} can be implemented in polynomial time.
 \end{theorem}
 
-\textit{Proof.} The theorem follows from the \cref{dec_run_time_lem} and the fact that the remaining subroutines for edge insertions and component deletions can hence also be implemented in polynomial time. Note in particular that there can be at most one component deletion during the update step after any given request.\qed
-
+\begin{proof}
+	The theorem follows from the \cref{dec_run_time_lem} and the fact that the remaining subroutines for edge insertions and component deletions can hence also be implemented in polynomial time. Note in particular that there can be at most one component deletion during the update step after any given request.
+\end{proof}
 
 
 \section{Evaluation}
