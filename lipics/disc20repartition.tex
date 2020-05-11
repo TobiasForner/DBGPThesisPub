@@ -347,12 +347,12 @@ siehe andere Paper, ohne details und citations.}
 
 We first introduce general definitions and notation in \cref{gen_def_section} which we will use throughout this thesis. 
 We then formally define the Dynamic Balanced Graph Partitioning (DBGP) problem in \cref{problem_definition_section}. 
-In \cref{related_work_section} we discuss previous work related to the DBGP problem. After that we describe two algorithmic ideas, denoted by \adjDel{} and \coreDel{}, which are inspired by prior work (\cite{Avin2015, Avin2016}) and the respective implications and challenges for their competitive analysis. 
+In \cref{sec:related_work} we discuss previous work related to the DBGP problem. After that we describe two algorithmic ideas, denoted by \adjDel{} and \coreDel{}, which are inspired by prior work (\cite{Avin2015, Avin2016}) and the respective implications and challenges for their competitive analysis. 
 In \cref{comp_analysis_section} we show the competitive ratio of $O(2/\epsilon\cdot k\log k)$ for the algorithm \adjDel{}.
 Then we discuss our implementation of \adjDel{} and show that the algorithm can be implemented in polynomial time in \cref{implDetSection}.
-After that we empirically evaluate our algorithms by comparing their results with those of existing implementations in \cref{evaluation_section}.
-We summarize the results of this thesis in \cref{conclusion_section}.
-Finally we describe avenues for future work in \cref{future_work_section}.
+After that we empirically evaluate our algorithms by comparing their results with those of existing implementations in \cref{sec:evaluation}.
+% We summarize the results of this thesis in \cref{sec:conclusion}.
+Finally we describe avenues for future work in \cref{sec:future_work}.
 
 \section{Model}
 \label{problem_definition_section}
@@ -362,9 +362,12 @@ set of $n=k\cdot \ell$ nodes (e.g., processes or virtual machines)
 that communicate with each other, 
 into $\ell$ servers (henceforth sometimes also called clusters) of size $k$ each, 
 while minimizing both the cost due to communication and due to node migrations. 
-More formally we are given \stefan{Herr Forner, bitte ersetzen
-Sie ueberall $l$ mit $\ell$.} $l$ servers $V_0,...,V_{l-1}$, 
-each with capacity $k$ and an initial perfect mapping of $n=k\cdot l$ nodes to the $l$ servers, i.e. each server is assigned exactly $k$ nodes. An input sequence $\sigma=(u_1, v_1), (u_2, v_2),...(u_i,v_i),...$ describes the sequence of communication requests: the pair $(u_t, v_t)$ represents a communication request between the nodes $u_t$ and $v_t$ arriving at time $t$. At time $t$ the algorithm is allowed to perform node migrations at a cost of $\alpha>1$ per move. After the migration step, the algorithm pays cost 1 if $u_t$ and $v_t$ are mapped to different servers and does not pay any cost otherwise. Note that an algorithm may also choose to perform no migrations at all.
+More formally we are given $\ell$ servers $V_0,...,V_{\ell-1}$, 
+each with capacity $k$ and an initial perfect mapping of $n=k\cdot \ell$ nodes to the $\ell$ servers, 
+i.e. each server is assigned exactly $k$ nodes. An input sequence $\sigma=(u_1, v_1), (u_2, v_2),...(u_i,v_i),...$ describes 
+the sequence of communication requests: the pair $(u_t, v_t)$ represents a communication request between the nodes 
+$u_t$ and $v_t$ arriving at time $t$. At time $t$ the algorithm is allowed to perform node migrations at a cost of $\alpha>1$ per move. 
+After the migration step, the algorithm pays cost 1 if $u_t$ and $v_t$ are mapped to different servers and does not pay any cost otherwise. Note that an algorithm may also choose to perform no migrations at all.
 This problem was introduced by Avin et al. \cite{Avin2016} (DISC 2016)
 and is known as online balanced re-partitioning.
 
@@ -598,7 +601,7 @@ In the following lemma we establish the upper bound on the cut edge weight when 
 
 Now that we have defined some general notions and fundamental properties we give an overview of the approach we use in order to achieve an upper bound on \adjDel{}, a lower bound on \opt{} and finally the competitive ratio of \adjDel{}.
 \adjDel{} allows us to argue about each deleted component and the requests deleted during its deletion separately.
-Furthermore we know that a component deleted by \adjDel{} is both at least $\alpha$-connected as well as larger than $k$, i.e. its nodes must be spread across several servers in the solution of \opt{}. This allows us to assign significant cost to \opt{}
+Furthermore we know that a component deleted by \adjDel{} is both at least $\alpha$-connected as well as larger than $k$, i.e. its nodes must be spread across several servers in the solution of \opt{}. This allows us to assign significant cost to \opt{}.
 Additionally we also know by the definition of \adjDel{} that the edges that are reset because they are adjacent to $C$ can not be part of any component. We use this fact in \cref{offl_int_lemma} in order to show that the amount of such requests is at most $k\cdot\alpha$ for each migration performed by \opt{}.
 These are the main concepts we use in order to bound the cost of \adjDel{} and to assign cost to \opt{} in the following sections. In \cref{comp_ratio_theo} we finally show the competitive ratio of \adjDel{} .
 
@@ -873,8 +876,8 @@ We can now combine the results of \cref{crep_upper_bound} and \cref{opt_lower_bo
 	\frac{\adjDel{}(\sigma)}{\opt(\sigma)}\leq O(2/\epsilon\cdot k \log k) +\beta'.
 	\end{align*}
 	
-	To obtain the bound on $\beta'$ we observe that the components in $\finalComps(\sigma)$ each are of size at most $k$ since they were not deleted by \adjDel{}. This allows us to derive to bound $\sum_{C\in \finalComps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\leq l \cdot k \cdot ((2/\epsilon+1)+\log k)$. Since at the end of the execution of \adjDel{} there can be at most $k\cdot l$ components, \cref{cut_lemma_upper} allows us to bound $\finalWeights(\sigma)$ by $k\cdot l \cdot\alpha$. Hence we conclude that $\beta'\leq l\cdot k \cdot
-	((2/\epsilon+1)+\log k)\cdot\alpha+k\cdot l\cdot \alpha\in O(2/\epsilon\cdot k \log k)$.
+	To obtain the bound on $\beta'$ we observe that the components in $\finalComps(\sigma)$ each are of size at most $k$ since they were not deleted by \adjDel{}. This allows us to derive to bound $\sum_{C\in \finalComps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\leq \ell \cdot k \cdot ((2/\epsilon+1)+\log k)$. Since at the end of the execution of \adjDel{} there can be at most $k\cdot \ell$ components, \cref{cut_lemma_upper} allows us to bound $\finalWeights(\sigma)$ by $k\cdot \ell \cdot\alpha$. Hence we conclude that $\beta'\leq \ell\cdot k \cdot
+	((2/\epsilon+1)+\log k)\cdot\alpha+k\cdot \ell\cdot \alpha\in O(2/\epsilon\cdot k \log k)$.
 \end{proof}
 
 \section{Polynomial-Time Implementation}
@@ -1072,7 +1075,7 @@ We conclude our analysis of the running time by observing that the remaining sub
 
 
 \section{Evaluation}
-\label{evaluation_section}
+\label{sec:evaluation}
 
 In order to complement our analytical results and shed light
 on the performance of our algorithm in practice, 
@@ -1098,7 +1101,7 @@ For \static{} we first record the communication graph and give it as input to \s
 
 As input data we use several HPC traces (\dbALong{}, \dbBLong{}, \dbCLong{}), the nature of the data is described in more detail by Avin, Ghobadi, Griner and Schmid in \cite{Avin2019}. For the sake of readability we use the abbreviations NB for NeckBone and MG for MultiGrid.
 
-All data sets contain 1024 different communication nodes and are limited to the first 300 000 requests. The value of $\alpha$ is set to 6 and the algorithm was tasked to partition the nodes into 32 clusters of size 32 each, i.e. $k=l=32$. The dynamic algorithms are allowed to use augmentation with a factor of $2.1$, i.e. for the dynamic algorithms the maximum cluster capacities are $\lfloor32\cdot2.1\rfloor=67$.
+All data sets contain 1024 different communication nodes and are limited to the first 300 000 requests. The value of $\alpha$ is set to 6 and the algorithm was tasked to partition the nodes into 32 clusters of size 32 each, i.e. $k=\ell=32$. The dynamic algorithms are allowed to use augmentation with a factor of $2.1$, i.e. for the dynamic algorithms the maximum cluster capacities are $\lfloor32\cdot2.1\rfloor=67$.
 
 \subsection{Comparison of \adjDel{} and \coreDel{}}
 
@@ -1370,7 +1373,7 @@ Finally \cref{runTimePlotMetis} illustrates the run times of \adapt{} and \stati
 \end{figure}
 
 \section{Related Work}
-\label{related_work_section}
+\label{sec:related_work}
 
 The closest work to ours is by Avin et al. \cite{Avin2015} 
 who initiated the study of the dynamic balanced graph partitioning 
@@ -1385,10 +1388,10 @@ Avin et al. \cite{Avin2018}
 assume that an adversary provides requests according to a fixed distribution of which the optimal algorithm \opt{} has knowledge while an online algorithm that is compared with \opt{} has not. Further the authors restrict the communication pattern to form a ring-like pattern, i.e. for the case of $n$ nodes $0,...,n-1$ only requests $r$ of the form $r=\{i \mod n, (i+1)\mod n\}$ are allowed. For this case they present a competitive online algorithm which achieves a competitive ratio of $O(\log n)$ with high probability.	
 Henzinger et al. \cite{Henzinger2019} 
 study a special \textit{learning variant} of the problem 
-where it is assumed that the input sequence $\sigma$ eventually reveals a perfect balanced partitioning of the $n$ nodes into $l$ parts of size $k$ such that the edge cut is zero. In this case the communication patterns reveal connected components of the communication graph of which each forms one of the partitions. Algorithms are tasked to \textit{learn} this partition and to eventually collocate nodes according to the partition while minimizing communication and migration costs.
-The authors of \cite{Henzinger2019} present an algorithm for the case where the number of servers is $l=2$ that achieves a competitive ratio of $O((\log n)/\epsilon)$ with augmentation $\epsilon$, i.e. each server has capacity $(1+\epsilon)n/2$ for $\epsilon\in(0,1)$.
-For the general case of $l$ servers of capacity $(1+\epsilon)n/l$ the authors construct an exponential-time algorithm that achieves a competitive ratio of $O((l\log n \log l)/\epsilon)$ for $\epsilon\in(0,1/2)$ and also provide a distributed version.
-Additionally the authors describe a polynomial-time $O((l^2\log n\log l)/\epsilon^2)$-competitive algorithm for the case with general $l$, servers of capacity $(1+\epsilon)n/l$ and $\epsilon\in(0,1/2)$.
+where it is assumed that the input sequence $\sigma$ eventually reveals a perfect balanced partitioning of the $n$ nodes into $\ell$ parts of size $k$ such that the edge cut is zero. In this case the communication patterns reveal connected components of the communication graph of which each forms one of the partitions. Algorithms are tasked to \textit{learn} this partition and to eventually collocate nodes according to the partition while minimizing communication and migration costs.
+The authors of \cite{Henzinger2019} present an algorithm for the case where the number of servers is $\ell=2$ that achieves a competitive ratio of $O((\log n)/\epsilon)$ with augmentation $\epsilon$, i.e. each server has capacity $(1+\epsilon)n/2$ for $\epsilon\in(0,1)$.
+For the general case of $\ell$ servers of capacity $(1+\epsilon)n/\ell$ the authors construct an exponential-time algorithm that achieves a competitive ratio of $O((\ell\log n \log \ell)/\epsilon)$ for $\epsilon\in(0,1/2)$ and also provide a distributed version.
+Additionally the authors describe a polynomial-time $O((\ell^2\log n\log \ell)/\epsilon^2)$-competitive algorithm for the case with general $\ell$, servers of capacity $(1+\epsilon)n/\ell$ and $\epsilon\in(0,1/2)$.
 
 The dynamic balanced graph partitioning problem 
 can be seen as a generalization (or symmetric version) of online paging.
@@ -1396,9 +1399,9 @@ In the online paging problem \cite{Fiat2002}, \cite{Epstein2011}
  one is given a scenario with a fast cache of $k$ pages and $n-k$ pages in slow memory. Pages are requested in an online manner, i.e. without prior knowledge of future requests. If a requested page is in the cache at the time of the request it can be served without cost. If it is in slow memory however, then a \textit{page fault} occurs and the requested page needs to be moved into the cache. If the cache is full then a page from the cache needs to be evicted, i.e. moved to the slow memory in order to make space for the requested one. The goal is to design algorithms which minimize the number of such page faults.
 However, the standard version of online paging has no equivalent to the option of serving a request remotely as is possible in the Dynamic Balanced Graph Partitioning problem. The variant \textit{with bypassing} allows an algorithm to access pages in slow memory without moving them into the cache, thus providing such an equivalent. It is worth stressing however that in our problem requests involve two nodes while in Online Paging the nodes themselves are requested.
 
-The static balanced graph partitioning problem is the static offline variant of the problem of this paper. In this version an algorithm may not perform any migrations, but has perfect knowledge of the request sequence $\sigma$ and then needs to provide a perfectly balanced partitioning of the $n=k\cdot l$ nodes into $l$ sets of equal size $k$ that minimizes cost, i.e. the weight of edges between the servers. This scenario can be modelled as a graph partitioning problem where the weight of an edge corresponds to the number of requests between its end points in the input sequence $\sigma$. 
+The static balanced graph partitioning problem is the static offline variant of the problem of this paper. In this version an algorithm may not perform any migrations, but has perfect knowledge of the request sequence $\sigma$ and then needs to provide a perfectly balanced partitioning of the $n=k\cdot \ell$ nodes into $\ell$ sets of equal size $k$ that minimizes cost, i.e. the weight of edges between the servers. This scenario can be modelled as a graph partitioning problem where the weight of an edge corresponds to the number of requests between its end points in the input sequence $\sigma$. 
 An algorithm then has to provide a partition of the nodes into sets of exactly $k$ nodes each while minimizing the total edge weights between partitions, i.e. an algorithm needs to minimize the edge cut of the graph.  
-This problem is NP-complete (\cite{Andreev2006}) and for the case where $l\geq 3$, Andreev and R\"acke (\cite{Andreev2006}) have shown that there is no polynomial time approximation algorithm which guarantees a finite approximation factor unless P=NP.
+This problem is NP-complete (\cite{Andreev2006}) and for the case where $\ell\geq 3$, Andreev and R\"acke (\cite{Andreev2006}) have shown that there is no polynomial time approximation algorithm which guarantees a finite approximation factor unless P=NP.
 
 There are several algorithms and frameworks for graph partitioning problems. Usually these frameworks employ heuristics in order to achieve their results. The most successful such heuristic is \textit{Multilevel Graph Partitioning} (\cite{Buluc2016}). This method consists of three phases. Initially the graph is repeatedly coarsened into a hierarchy of smaller graphs in such a way that cuts in the coarse graphs also correspond to cuts in the finer graphs. On the coarsest level a (potentially expensive) algorithm is used in order to compute an initial partition. This partitioning is then transferred to the finer graphs. In this process one usually uses other local heuristics in order to improve the partition quality even further with every step.
 METIS (\cite{Karypis1998, Karypis1998a}) and Jostle (\cite{Walshaw2000, walshaw2007jostle}) are examples of libraries that utilize this multilevel approach. We choose METIS as a reference for our empirical evaluation.
@@ -1411,7 +1414,7 @@ and is the process of generating subsets of elements with high similarity
 However, we consider an online problem, i.e. algorithms need to react dynamically to changes in the graph and need to maintain their data structures and adapt accordingly whereas clustering considers complete data sets which are static.
 
 \section{Future Work}
-	\label{conclusion_section}
+	\label{sec:future_work}
 	
 While our algorithm does not only achieve a polynomial runtime
 and an almost competitive ratio (up to a logarithmic factor),
