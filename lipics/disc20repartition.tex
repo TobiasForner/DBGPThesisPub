@@ -50,6 +50,7 @@
 \newcommand{\adjDel}{\textsc{pCrep}}
 \newcommand{\static}{\textsc{Static}}
 \newcommand{\adapt}{\textsc{Adapt}}
+\newcommand{\directDecomp}{\textsc{dCrep}}
 
 \newcommand{\size}{\text{\scriptsize SIZE}}
 \newcommand{\optmig}{\text{\scriptsize OPT-MIG}}
@@ -75,10 +76,14 @@
 \newcommand{\dbALong}{Mocfe}
 \newcommand{\dbBLong}{NeckBone}
 \newcommand{\dbCLong}{MultiGrid}
+\newcommand{\fbLong}{Facebook}
 
 \newcommand{\dbA}{Mocfe}
 \newcommand{\dbB}{NB}
 \newcommand{\dbC}{MG}
+\newcommand{\fb}{FB}
+\newcommand{\dbmocfe}{Mocfe}
+\newcommand{\dbnekbone}{NB}
 
 \newcommand\stefan[1]{{\color{blue}\textbf{Stefan: #1 }}}
 
@@ -1027,7 +1032,34 @@ This can be remedied by repeating the procedure on the resulting subgraphs until
 In order to speed up this computation we use the heap data structure proposed and analyzed by Chang et al. (\cite{Chang2013}).
 
 Thus we conclude that this procedure correctly decomposes a given subgraph as Chang et al. have also stated in Theorem 3.1 in \cite{Chang2013}.
-In the following section we show that this decomposition can be implemented in polynomial time.
+
+Next we discuss additional optimization ideas and then we show that this decomposition can be implemented in polynomial time.
+
+
+\subsection{Optimizations}
+	 We present optimization approaches we chose in order to improve the running time of our implementation of \adjDel{}.
+	
+	 \subsubsection{k-core-based Optimization}
+	
+	This optimization technique uses the fact that a $\alpha$-connected component 
+	may only contain nodes or other components whose weighted degree is at least 
+	$\alpha$. Hence we can iteratively cut all components whose weighted degree is 
+	less than $\alpha$ until no more components can be cut by applying this rule.
+	
+	\subsubsection{Tracking the smallest cut}
+	
+	In each decomposition step we keep track of the smallest minimum $(s,t)$-cut 
+	that was encountered and then may increase the connectivity as maintained by 
+	our decomposition tree data structure that corresponds to the current subgraph 
+	to this number. This can significantly speed up our algorithm in cases where 
+	parts of the tree are recomputed as it guarantees that each subtree is merged 
+	completely at most once. For example there may be a case where after a deletion 
+	of a component the connectivity of the whole graph is 0 but the graph still 
+	contains large subgraphs of high connectivity. In this case the connectivity 
+	of those subgraphs that is tracked in the tree can be increased by more than 
+	one if a decomposition step has resulted in merges only.
+
+	In the following section we show that this decomposition algorithm can be implemented in polynomial time.
 
 
 \subsection{Running Time}
@@ -1087,21 +1119,172 @@ We also compare our algorithm to reference algorithms.
 \label{algSection}
 
 We first present the algorithms we compare in order to evaluate our results
-We consider both algorithmic approaches based on maintaining a second-order partition of the nodes into components we discussed in \cref{algIdeas}, i.e. \adjDel{} where on a component deletion all edges inside of and adjacent to the component are deleted and \coreDel{} which only deletes internal edges. Both algorithms start with randomly initialized mappings of nodes to servers
+We consider our algorithm based on maintaining a second-order partition of the nodes into components we discussed in \cref{algIdeas}, 
+i.e. \adjDel{} where on a component deletion all edges inside of and adjacent to the component are deleted and \coreDel{} which only deletes internal edges. 
+Both algorithms start with randomly initialized mappings of nodes to servers
 We have shown the competitive ratio of \adjDel{} in \cref{comp_ratio_theo} and its polynomial running time in the previous section.
 
-We compare these algorithms both with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{} and the adaptive/dynamic algorithm \nl{ParMETIS\_V3\_AdaptiveRepart} (\cite{Karypis1999, Schloegel1997, Schloegel2000}) available in the ParMetis framework, referred to as \adapt{}. Both frameworks are known to produce very good results and to be very fast.
-
-We run \adapt{} in an online manner while maintaining a communication graph by inserting an edge or incrementing a corresponding edge weight for each request, i.e. \adapt{} is called after each request is inserted into the graph.
+We compare these algorithms with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{} available in the ParMetis framework. %Both frameworks are known to produce very good results and to be very fast.
 
 For \static{} we first record the communication graph and give it as input to \static{}. We then compute the cost of \static{} due to migrations from the random initial mapping of nodes to servers and due to remote requests, i.e. the total weight of edges between nodes of the communication graph which \static{} mapped to different servers.
 
 \subsection{Input Data}
 \label{inputDesc}
 
-As input data we use several HPC traces (\dbALong{}, \dbBLong{}, \dbCLong{}), the nature of the data is described in more detail by Avin, Ghobadi, Griner and Schmid in \cite{Avin2019}. For the sake of readability we use the abbreviations NB for NeckBone and MG for MultiGrid.
+\begin{figure}
+	\begin{center}
+		\begin{tabular}{|l|c|c|c|c|c|c|}
+			\hline
+			trace & nodes & requests & $\ell$ & $k$ & $\alpha$ & $\delta$\\
+			\hline
+			\dbnekbone{} & 512 & 250 000 & 32 & 16 & 3 & 2.1 \\
+			\dbmocfe{} & 1024 & 250 000 & 32 & 32 & 3 & 2.1 \\
+			\fb{} & 2048 & 10 000 & 64 & 32 & 3 & 2.1 \\
+			\hline
+		\end{tabular}
+	\end{center}
+	\caption{overview of the traces used for the evaluation}
+	\label{fig:trace_overview}
+\end{figure}
 
-All data sets contain 1024 different communication nodes and are limited to the first 300 000 requests. The value of $\alpha$ is set to 6 and the algorithm was tasked to partition the nodes into 32 clusters of size 32 each, i.e. $k=\ell=32$. The dynamic algorithms are allowed to use augmentation with a factor of $2.1$, i.e. for the dynamic algorithms the maximum cluster capacities are $\lfloor32\cdot2.1\rfloor=67$.
+As input data we use three traces, two hpc traces, \dbnekbone{} and \dbmocfe{}, as well as a trace from a facebook data center which we call \fb{}.
+ The nature of the data is described in more detail by Avin, Ghobadi, Griner and Schmid in \cite{Avin2019}.
+We have evaluated our implementation using subsets of these traces. For \dbmocfe{} we have used the first 250 000 requests in a setting with 1024 nodes. 
+For \dbmocfe{} we examine the case where the number of servers is $\ell=32$, each of size $k=32$.
+For \fb{} we have restricted the trace to 2048 nodes. For this restriction we have iteratively chosen the vertex pairs that communicate the most during the first 20 million requests 
+until we have reached the number of 2048 nodes. We have then added all requests between two of these nodes to our data set. For this scenario we used a configuration with $\ell=64$ 
+servers is $\ell=32$ of size $k=32$.
+The runs are then performed on the first 10 000 of these request. Similarly we have restricted \dbnekbone{} to 512 nodes and have used the first 250 000 requests for this setting 
+this data set is then evaluated in a scenario where the number of servers is $\ell=32$, each of size $k=32$.
+For all configurations we use $\alpha=3$ and $\delta=2.1$.
+These configurations are summarized in \cref{fig:trace_overview}.
+
+The influence of $\alpha$ on the running time is investigated further in \cref{sec:alpha_influence}.
+
+\subsection{On the Running Time}
+	We evaluate the running time of \adjDel{} by presenting results for different sets of 
+	input data and by comparison with an alternative implementation that does not use the decomposition tree 
+	structure mentioned in \cref{implDetSection}.
+	This other implementation instead applies the MinCut-based decomposition algorithm presented in \cref{decomp_desc}
+	to the whole graph and thus computes the new components in one decomposition step, we call it \directDecomp{}.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/time_all_filtered_decompTree"}
+			\caption{time results for \adjDel}
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/time_all_filtered_compDecomp"}
+			\caption{time results for \directDecomp}
+		\end{subfigure}		
+	\end{minipage}
+	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for all 3 data sets}\label{fig:all_runtimes_boxplot}
+\end{figure}
+
+%\cref{fig:all_runtimes_boxplot} shows a comparison of the running times 
+\cref{fig:all_runtimes_boxplot} shows the results all data sets for \adjDel{} and \directDecomp{}. For the plots we have filtered the running times to only include updates which have led the respective algorithm to update, i.e. those updates where the communicating nodes belonged to different components at the time of the request. 
+We can see that for both algorithms \fb{} produces by far the longest run time and that \directDecomp{} performs significantly better for \fb{}.
+We first compare the run times of both algorithms for the hpc data sets before we discuss the run times for \fb{} in greater detail.
+
+\begin{figure}
+	\centering
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/time_hpc_filtered_decompTree"}
+			\caption{time results for \adjDel}
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/time_hpc_filtered_compDecomp"}
+			\caption{time results for \directDecomp}
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/barplot_time_hpc_filtered_decompTree"}
+			\caption{total time for \adjDel}
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/barplot_time_hpc_filtered_compDecomp"}
+			\caption{total time for \directDecomp}
+		\end{subfigure}		
+	\end{minipage}
+	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for both hpc traces}\label{fig:hpc_runtimes_boxplot_restricted}
+\end{figure}
+
+\cref{fig:hpc_runtimes_boxplot_restricted} shows plots for run times of \adjDel{} 
+and \directDecomp{} for the HPC traces. In the top of the figure you can see the 
+distribution of the update times over the requests while the total times are shown 
+in the bottom. The figure shows that \adjDel{} is considerably faster for both hpc traces.
+
+\begin{figure}
+	\centering
+	\includegraphics*[height=6cm]{"plots/plot_facebook_time_to_size"}
+	\caption{relation of size to time for \fb{} for \adjDel{}}\label{fig:fb_size_to_time}
+\end{figure}
+
+\cref{fig:fb_size_to_time} illustrates the relation of the time need for handling a 
+request and the number of edges in the data structure for \adjDel{} for \fb{}. One can see that
+the plots behave very similarly. While we can not prove this, we suspect that this may 
+be due to the fact that the data used for the run shows little structure and thus leads
+a large number of (costly) recomputation steps for our data structure. This is also supported by the fact that
+\directDecomp{} is significantly faster for \fb{} as one can see in 
+\cref{fig:all_runtimes_boxplot}.
+
+\subsection{On the Influence of $\alpha$ on the Running Time}
+\label{sec:alpha_influence}
+\begin{figure}[h]
+	\centering
+	\includegraphics*[height=6cm]{"plots/boxplot_varying_alphas_mocfe_filtered"}
+	\includegraphics*[height=6cm]{"plots/plot_varying_alphas_mocfe"}
+	\caption{runtime boxplot of \adjDel{} for \dbmocfe{} for different values of $\alpha$}
+	\label{fig:alpha_influence}
+\end{figure}
+
+\cref{fig:alpha_influence} shows a plot of the running time of \adjDel{} for $\alpha\in\{1,2,4,8,16\}$. In order to improve the readability
+only requests which led to an update of the data structure are included. The results show that \adjDel{} is slower for $\alpha=1$ than for $\alpha\in\{2,4\}$.
+This may be due to the fact that lower values of $\alpha$ lead \adjDel{} to update the tree structure more frequently.
+Especially for $\alpha=1$ every inserted edge leads to a merge as edges are only inserted between different components and $\alpha$ 
+is both the cost for a node migration as well as the connectivity threshold for merging for \adjDel{}.
+The remaining results mirror the expectation that the increase in the potential height of the decomposition tree also increases the required time 
+as the update times may increase.
+
+\subsection{On the Cost}
+Finally we evaluate the cost of our algorithm, i.e. both the communication as well 
+as the migration cost. We compare our algorithm with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{}.
+
+\begin{figure}[h]
+	\centering
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/plot_cost_decompTree"}
+			\caption{cost of \adjDel}
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{"plots/plot_cost_static"}
+			\caption{cost of \static{}}
+		\end{subfigure}		
+	\end{minipage}
+	\caption{comparison of the costs of \adjDel{} (left) and \static{} (right) for all 3 data sets}\label{fig:all_cost_barplot}
+\end{figure}
+
+\cref{fig:all_cost_barplot} shows the costs of \adjDel{} and \static{} for \fb{}, \dbmocfe{} and \dbnekbone{}.
+Note that for \fb{} the cost of \adjDel{} (9932) is actually lower than the cost of \static{} (12491). For the HPC traces
+\static{} is able to achieve significantly lower cost than our algorithm \adjDel{}.
+
+Note though that there is no way to specify partition sizes exactly for \static{}. Thus \static{} may not produce a perfect 
+static partitioning, i.e. one where each partition is of size $k$ like it is even expected of \opt{}.
+
+\begin{comment}
 
 \subsection{Comparison of \adjDel{} and \coreDel{}}
 
@@ -1371,6 +1554,7 @@ Finally \cref{runTimePlotMetis} illustrates the run times of \adapt{} and \stati
 	\end{tikzpicture}
 	\caption{comparison of running time of \adapt{} and \static{}}\label{runTimePlotMetis}
 \end{figure}
+\end{comment}
 
 \section{Related Work}
 \label{sec:related_work}
@@ -1427,7 +1611,7 @@ On the practical front, we believe that our algorithm can
 be further engineered and optimized to achieve a lower runtime
 in practice, as well as an improved empirical competitive ratio
 under real (non worst-case) workloads.
-These kinds of adjustments may be achieved for example by changing certain algorithm parameters such as the connectivity threshold
+These kinds of adjustments may be achieved for example by changing certain algorithm parameters such as the connectivity threshold.
 There may also be potential in adapting and improving our decomposition tree data structure in order to improve running times.
 %Finally, we plan to provide a distributed implementation 
 
