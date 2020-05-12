@@ -269,8 +269,8 @@ This paper revisits the online balanced re-partitioning problem
 \cite{Avin2016} which models the tradeoff between the benefits
 and the costs of dynamic relocations. The goal is to design an algorithm 
 which maintains, at any time, a mapping of $n$ communication nodes (virtual machines) to $\ell$ servers of fixed equal size $k$; in the absence of augmentation,
-$n=\ell k$, \stefan{please check:} whereas in the variant with augmentation,
-the server size is increased by a factor $1/\epsilon$ for
+$n=\ell k$, whereas in the variant with augmentation,
+the server size is increased by a factor $2+\epsilon$ for
 some $\epsilon>0$. The communication pattern can be seen as a dynamic
 graph, from which communication requests arrive in an online manner;
 in other words, the online algorithm does not have prior knowledge of future communication requests. The goal is to strike a balance between the benefits
@@ -336,28 +336,23 @@ The \textit{connectivity} of a graph $G$ is equal to the value of a minimum edge
 
 Furthermore we define the term $(s,t)$\textit{-cut} as a cut $(X,Y)$ for which $s\in X$ and $Y\in X$, i.e. a $(s,t)$-cut separates the nodes $s$ and $t$ in $G$. Then a \textit{minimum $(s,t)$-cut} is a $(s,t)$-cut of minimum value. Note that a minimum $(s,t)$-cut is not necessarily a minimum cut.
 
+In this paper we always use $1+\epsilon$ as the basis for the logarithm.
+
 Finally we call an injective function $m:X\rightarrow Y$ a \textit{mapping of $X$ to $Y$}. We use this terminology for example when we talk about the assignment of nodes to servers.
-
-\stefan{fixme: Herr Forner,
-bitte entfernen Sie CoreDel von den Figures,
-und nennen Sie CREP-Adj zu pCREP um.}
-
 
 \subsection{Organization}
 
 The remainder of this paper is organized
-as follows. \stefan{fixme: Herr Forner,
-bitte hier einfach ganz kurz ein Satz pro Section,
-siehe andere Paper, ohne details und citations.}
+as follows. 
+We first introduce our model in greater detail in \cref{problem_definition_section}.
+Finally we describe avenues for future work in \cref{sec:future_work}. We then give an overview of our algorithm in \cref{algIdeas}.
+We present the competitive analysis and the competitive ratio of our algorithm \adjDel{} in \cref{comp_analysis_section}.
+In \cref{implDetSection} we discuss our polynomial time implementation as well as optimizations 
+of the algorithm.
+We evaluate both the cost and the running time of our algorithm in \cref{sec:evaluation}. 
+In \cref{sec:related_work} we discuss previous work. Finally we present ideas for future 
+work in \cref{sec:future_work}.
 
-We first introduce general definitions and notation in \cref{gen_def_section} which we will use throughout this thesis. 
-We then formally define the Dynamic Balanced Graph Partitioning (DBGP) problem in \cref{problem_definition_section}. 
-In \cref{sec:related_work} we discuss previous work related to the DBGP problem. After that we describe two algorithmic ideas, denoted by \adjDel{} and \coreDel{}, which are inspired by prior work (\cite{Avin2015, Avin2016}) and the respective implications and challenges for their competitive analysis. 
-In \cref{comp_analysis_section} we show the competitive ratio of $O(2/\epsilon\cdot k\log k)$ for the algorithm \adjDel{}.
-Then we discuss our implementation of \adjDel{} and show that the algorithm can be implemented in polynomial time in \cref{implDetSection}.
-After that we empirically evaluate our algorithms by comparing their results with those of existing implementations in \cref{sec:evaluation}.
-% We summarize the results of this thesis in \cref{sec:conclusion}.
-Finally we describe avenues for future work in \cref{sec:future_work}.
 
 \section{Model}
 \label{problem_definition_section}
@@ -387,7 +382,7 @@ where $\onl{}(\sigma)$ and $\opt{}(\sigma)$ denote the cost of serving input seq
 
 We consider a model with augmentation (as in prior work \cite{Avin2016}),
 and allow the online algorithm to use larger capacities per server. 
-In particular, the online algorithm is allowed to assign $\delta\cdot n/k$ nodes to each server where $\delta>1$. 
+In particular, the online algorithm is allowed to assign $\delta\cdot n/\ell$ nodes to each server where $\delta>1$. 
 This augmented online algorithm is then compared with the optimal offline algorithm \opt{} which is not allowed to use any augmentation.
 
 \section{Basic Algorithm}
@@ -595,7 +590,7 @@ In the following lemma we establish the upper bound on the cut edge weight when 
 
 \begin{lemma}
 	\label{cut_lemma_upper}
-	Given a mergeable set of components $S$ and a partitioning of $S$ into $g\geq2$ parts $S_1,...,S_g$. The weight between the parts $S_i$ is at most $(g-1)\cdot\alpha$ during the execution of \adjDel{} (in the version \adjDel{}).
+	Given a mergeable set of components $S$ and a partitioning of $S$ into $g\geq2$ parts $S_1,...,S_g$. The weight between the parts $S_i$ is at most $(g-1)\cdot\alpha$ during the execution of \adjDel{}.
 \end{lemma}
 
 \begin{proof}
@@ -1127,6 +1122,7 @@ We have shown the competitive ratio of \adjDel{} in \cref{comp_ratio_theo} and i
 We compare these algorithms with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{} available in the ParMetis framework. %Both frameworks are known to produce very good results and to be very fast.
 
 For \static{} we first record the communication graph and give it as input to \static{}. We then compute the cost of \static{} due to migrations from the random initial mapping of nodes to servers and due to remote requests, i.e. the total weight of edges between nodes of the communication graph which \static{} mapped to different servers.
+We discuss the traces used for our experiments in the next section.
 
 \subsection{Input Data}
 \label{inputDesc}
@@ -1185,7 +1181,6 @@ The influence of $\alpha$ on the running time is investigated further in \cref{s
 	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for all 3 data sets}\label{fig:all_runtimes_boxplot}
 \end{figure}
 
-%\cref{fig:all_runtimes_boxplot} shows a comparison of the running times 
 \cref{fig:all_runtimes_boxplot} shows the results all data sets for \adjDel{} and \directDecomp{}. For the plots we have filtered the running times to only include updates which have led the respective algorithm to update, i.e. those updates where the communicating nodes belonged to different components at the time of the request. 
 We can see that for both algorithms \fb{} produces by far the longest run time and that \directDecomp{} performs significantly better for \fb{}.
 We first compare the run times of both algorithms for the hpc data sets before we discuss the run times for \fb{} in greater detail.
@@ -1232,11 +1227,16 @@ in the bottom. The figure shows that \adjDel{} is considerably faster for both h
 
 \cref{fig:fb_size_to_time} illustrates the relation of the time need for handling a 
 request and the number of edges in the data structure for \adjDel{} for \fb{}. One can see that
-the plots behave very similarly. While we can not prove this, we suspect that this may 
+the plots behave very similarly, i.e. a large number of edges in the graph maintained by 
+\adjDel{} seems to lead to longer update times. Similarly the update times are shorter after 
+the number of edges decreases, i.e. after a component deletion. While we can not prove this, 
+we suspect that this may 
 be due to the fact that the data used for the run shows little structure and thus leads
-a large number of (costly) recomputation steps for our data structure. This is also supported by the fact that
-\directDecomp{} is significantly faster for \fb{} as one can see in 
+a large number of (costly) recomputation steps for our data structure. This is also supported 
+by the fact that \directDecomp{} is significantly faster for \fb{} as one can see in 
 \cref{fig:all_runtimes_boxplot}.
+
+Next we discuss the influence of $\alpha$ on the running time of \adjDel{}.
 
 \subsection{On the Influence of $\alpha$ on the Running Time}
 \label{sec:alpha_influence}
