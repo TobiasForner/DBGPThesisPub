@@ -95,7 +95,7 @@
 \title{Online Balanced Repartitioning 
 of Dynamic Communication Patterns in Polynomial Time} %TODO Please add
 
-\titlerunning{Polynomial-time Repartitioning} %TODO optional, please use if title is longer than one line
+\titlerunning{Polytime Online Repartitioning} %TODO optional, please use if title is longer than one line
 
 \author{Tobias Michael Forner}{Technical University of Munich, Germany}{}{}{}%TODO
 \author{Harald Räcke}{Technical University of Munich, Germany}{}{}{}%TODO
@@ -490,9 +490,11 @@ The fact that \adjDel{} also resets adjacent edges means that we can uniquely id
 	
 	
 	\end{tikzpicture}
-	\caption{illustration for the \adjDel{} approach}\label{exOldCrep}
+	\caption{Illustration for the \adjDel{} approach}\label{exOldCrep}
 	
 \end{figure}		
+
+\stefan{Herr Forner: bitte Figure noch einwenig besser beschreiben in caption.}
 
 \section{Competitive Analysis}
 \label{comp_analysis_section}
@@ -967,7 +969,7 @@ Also note that both algorithms generally pay more for migrations than for commun
 	\legend{communication cost, migration cost}
 	\end{axis}
 	\end{tikzpicture}
-	\caption{comparison of the total cost of \adjDel{} (left) and \coreDel{} (right)}\label{costPlotCrep}
+	\caption{Comparison of the total cost of \adjDel{} (left) and \coreDel{} (right)}\label{costPlotCrep}
 \end{figure}
 
 \begin{figure}
@@ -993,7 +995,7 @@ Also note that both algorithms generally pay more for migrations than for commun
 	\legend{\adjDel{}, \coreDel{}}
 	\end{axis}
 	\end{tikzpicture}
-	\caption{comparison of running time of \adjDel{} and \coreDel{}}\label{runTimePlotCrep}
+	\caption{Comparison of running time of \adjDel{} and \coreDel{}}\label{runTimePlotCrep}
 \end{figure}
 
 \subsection{On the Influence of the Connectivity Threshold}
@@ -1058,7 +1060,7 @@ These improvements come at a cost of running time as \cref{runTimePlotCrep2A} sh
 	\legend{communication cost, migration cost}
 	\end{axis}
 	\end{tikzpicture}
-	\caption{comparison of the total cost of \adjDel{} (left) and \coreDel{} (right) in the case where merges are performed at connectivity $2\cdot\alpha$}\label{costPlotCrepTwoAlpha}
+	\caption{Comparison of the total cost of \adjDel{} (left) and \coreDel{} (right) in the case where merges are performed at connectivity $2\cdot\alpha$}\label{costPlotCrepTwoAlpha}
 \end{figure}
 
 
@@ -1085,7 +1087,7 @@ These improvements come at a cost of running time as \cref{runTimePlotCrep2A} sh
 	\legend{\adjDel{}, \coreDel{}}
 	\end{axis}
 	\end{tikzpicture}
-	\caption{comparison of running time of \adjDel{} and \coreDel{} in the case where merges are performed at connectivity $2\cdot\alpha$}\label{runTimePlotCrep2A}
+	\caption{Comparison of running time of \adjDel{} and \coreDel{} in the case where merges are performed at connectivity $2\cdot\alpha$}\label{runTimePlotCrep2A}
 \end{figure}
 
 \subsection{Results of \adapt{} and \static}
@@ -1139,7 +1141,7 @@ These improvements come at a cost of running time as \cref{runTimePlotCrep2A} sh
 	\legend{communication cost, migration cost}
 	\end{axis}
 	\end{tikzpicture}
-	\caption{comparison of the total cost of \adapt{} (left) and \static{} (right)}\label{costPlotMetis}
+	\caption{Comparison of the total cost of \adapt{} (left) and \static{} (right)}\label{costPlotMetis}
 \end{figure}
 
 
@@ -1173,7 +1175,7 @@ Finally \cref{runTimePlotMetis} illustrates the run times of \adapt{} and \stati
 	\legend{\adapt{}, \static{}}
 	\end{axis}
 	\end{tikzpicture}
-	\caption{comparison of running time of \adapt{} and \static{}}\label{runTimePlotMetis}
+	\caption{Comparison of running time of \adapt{} and \static{}}\label{runTimePlotMetis}
 \end{figure}
 \end{comment}
 
@@ -1206,10 +1208,10 @@ However, the standard version of online paging has no equivalent to the option o
 
 The static balanced graph partitioning problem is the static offline variant of the problem of this paper. In this version an algorithm may not perform any migrations, but has perfect knowledge of the request sequence $\sigma$ and then needs to provide a perfectly balanced partitioning of the $n=k\cdot \ell$ nodes into $\ell$ sets of equal size $k$ that minimizes cost, i.e. the weight of edges between the servers. This scenario can be modelled as a graph partitioning problem where the weight of an edge corresponds to the number of requests between its end points in the input sequence $\sigma$. 
 An algorithm then has to provide a partition of the nodes into sets of exactly $k$ nodes each while minimizing the total edge weights between partitions, i.e. an algorithm needs to minimize the edge cut of the graph.  
-This problem is NP-complete (\cite{Andreev2006}) and for the case where $\ell\geq 3$, Andreev and R\"acke (\cite{Andreev2006}) have shown that there is no polynomial time approximation algorithm which guarantees a finite approximation factor unless P=NP.
+This problem is NP-complete (\cite{Andreev2006}) and for the case where $\ell\geq 3$, Andreev and R\"acke \cite{Andreev2006} have shown that there is no polynomial time approximation algorithm which guarantees a finite approximation factor unless P=NP.
 
-There are several algorithms and frameworks for graph partitioning problems. Usually these frameworks employ heuristics in order to achieve their results. The most successful such heuristic is \textit{Multilevel Graph Partitioning} (\cite{Buluc2016}). This method consists of three phases. Initially the graph is repeatedly coarsened into a hierarchy of smaller graphs in such a way that cuts in the coarse graphs also correspond to cuts in the finer graphs. On the coarsest level a (potentially expensive) algorithm is used in order to compute an initial partition. This partitioning is then transferred to the finer graphs. In this process one usually uses other local heuristics in order to improve the partition quality even further with every step.
-METIS (\cite{Karypis1998, Karypis1998a}) and Jostle (\cite{Walshaw2000, walshaw2007jostle}) are examples of libraries that utilize this multilevel approach. We choose METIS as a reference for our empirical evaluation.
+There are several algorithms and frameworks for graph partitioning problems. Usually these frameworks employ heuristics in order to achieve their results. The most successful such heuristic is \textit{Multilevel Graph Partitioning} \cite{Buluc2016}. This method consists of three phases. Initially the graph is repeatedly coarsened into a hierarchy of smaller graphs in such a way that cuts in the coarse graphs also correspond to cuts in the finer graphs. On the coarsest level a (potentially expensive) algorithm is used in order to compute an initial partition. This partitioning is then transferred to the finer graphs. In this process one usually uses other local heuristics in order to improve the partition quality even further with every step.
+METIS \cite{Karypis1998, Karypis1998a} and Jostle \cite{Walshaw2000, walshaw2007jostle} are examples of libraries that utilize this multilevel approach. We choose METIS as a reference for our empirical evaluation.
 
 More generally, clustering has been studied within a variety of
 different contexts 
@@ -1328,7 +1330,7 @@ In the following lemma we establish the upper bound on the cut edge weight when 
 		\path (E) edge[-] node[below] {$2$} (F); % 4 to 5
 		\path (D) edge[-] node[above] {$1$} (G); % 3 to 6
 		\end{tikzpicture}
-		\caption{example graph}
+		\caption{Example graph}
 		\label{ex_graph}
 	\end{figure}
 \end{center}
@@ -1340,7 +1342,7 @@ In the following lemma we establish the upper bound on the cut edge weight when 
 	[.{$\{3,4,5,6\}$\\conn$=1$} [.{$\{3,4,5\}$\\conn=4} ]
 	[.{$\{6\}$\\conn$=\infty$} ]]]
 	
-	\caption{decomposition tree for the graph from \cref{ex_graph} for $\alpha=4$}
+	\caption{Decomposition tree for the graph from \cref{ex_graph} for $\alpha=4$}
 	\label{ex_decomp_tree}
 \end{figure}
 
@@ -1363,7 +1365,7 @@ In the following lemma we establish the upper bound on the cut edge weight when 
 
 In more details, \cref{insertAndUpdate} is the main function that is called upon each new request. It checks whether the new request is between different $\alpha$-connected components. If this is not the case it determines that this request can not change the decomposition and returns.
 Otherwise the weight of the corresponding edge is increased and other routines are called that update the decomposition based on this new edge.
-\cref{updateDecomposition} first determines the smallest sub-graph in the decomposition tree that contains both end points of the request and decomposes this sub-graph. For this decomposition step we use the algorithm proposed by Chang et al. (\cite{Chang2013}). We explain this algorithm in greater detail in \cref{decomp_desc}.
+\cref{updateDecomposition} first determines the smallest sub-graph in the decomposition tree that contains both end points of the request and decomposes this sub-graph. For this decomposition step we use the algorithm proposed by Chang et al. \cite{Chang2013}. We explain this algorithm in greater detail in \cref{decomp_desc}.
 
 \begin{algorithm}
 	\caption{updateDecomposition($a$,$b$)}
@@ -1375,7 +1377,8 @@ Otherwise the weight of the corresponding edge is increased and other routines a
 		\IF{$res$.connectivity==$\alpha$}
 		\STATE continue
 		\ENDIF
-		\STATE $res\leftarrow$ decompose(current, current.connectivity+1)//decomposition based on $(s,t)$-cuts
+		\STATE $res\leftarrow$ decompose(current, current.connectivity+1) // 
+		\emph{decomposition based on $(s,t)$-cuts} 
 		\STATE current.connectivity $\leftarrow$ value of smallest encountered cut
 		\IF {current.connectivity$\geq\alpha$}
 		\STATE continue
@@ -1423,25 +1426,34 @@ In the case of a collocation the nodes are moved to a cluster that has enough sp
 
 In order to complement our analytical results and shed light
 on the performance of our algorithm in practice, 
-we implemented our algorithm and conducted experiments
-under real-world traffic traces. 
-We also compare our algorithm to reference algorithms.
+we implemented $\adjDel$ and conducted experiments
+under real-world traffic traces from datacenters
+and high-performance computing clusters. 
+We also discuss an algorithm engineering approach to improve the practical
+performance of $\adjDel$, and compare the algorithm to different reference algorithms
+and heuristics.
 
 \subsection{Reference Algorithms}
 \label{algSection}
 
-\stefan{Herr Forner, wollen wir hier CorDel noch entfernen?}
+\stefan{Herr Forner, bitte hier alle referenzalgos auffuehren, auch Cordel,
+und dafuer spaeter nicht mehr wiederholen (und namen konsistent).}
 
-We compare our algorithm to reference algorithms. 
-We consider our algorithm based on maintaining a second-order partition of the nodes into components we discussed in \cref{algIdeas}, 
-i.e. \adjDel{} where on a component deletion all edges inside of and adjacent to the component are deleted and \coreDel{} which only deletes internal edges. 
-Both algorithms start with randomly initialized mappings of nodes to servers
-We have shown the competitive ratio of \adjDel{} in \cref{comp_ratio_theo} and its polynomial running time in the previous section.
-
-We compare these algorithms with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{} available in the ParMetis framework. %Both frameworks are known to produce very good results and to be very fast.
-
+We consider the following baselines in our evaluation.
+\adjDel{} is based on maintaining a second-order partition of the nodes 
+into components, and when a component is deleted all edges inside of and adjacent to the component are reset as well. 
+A natural alternative, is to reset internal edges only on this occasion;
+we will refer to this algorithmic variant as $\coreDel$.
+Both algorithms start with randomly initialized mappings of nodes to servers.
+Another natural reference point is a static graph partitioning;
+to this end, we use the METIS\_PartGraphRecursive algorithm 
+implemented in the METIS framework \cite{Karypis1998, Karypis1998a},
+and will refer to it simply as \static{}. %Both frameworks are known to produce very good results and to be very fast.
 For \static{} we first record the communication graph and give it as input to \static{}. We then compute the cost of \static{} due to migrations from the random initial mapping of nodes to servers and due to remote requests, i.e. the total weight of edges between nodes of the communication graph which \static{} mapped to different servers.
 We discuss the traces used for our experiments in the next section.
+
+\stefan{Herr Forner: vielleicht muessen wir delta gar nicht einfuehren, und
+alles mit epsilon machen, wie vorne. waere das moeglich?}
 
 \subsection{The Workload}
 \label{inputDesc}
@@ -1458,12 +1470,16 @@ We discuss the traces used for our experiments in the next section.
 			\hline
 		\end{tabular}
 	\end{center}
-	\caption{overview of the traces used for the evaluation}
+	\caption{Traces used in the evaluation}
 	\label{fig:trace_overview}
 \end{figure}
 
-As input data we use three traces, two hpc traces, \dbnekbone{} and \dbmocfe{}, as well as a trace from a facebook data center which we call \fb{}.
- The nature of the data is described in more detail by Avin, Ghobadi, Griner and Schmid in \cite{Avin2019}.
+We consider different real-world traffic traces (workloads),
+two hpc traces, \dbnekbone{} and \dbmocfe{}, as well as a trace from 
+a Facebook data center which we call \fb{}.
+ The traces and their characteristics 
+are described in more detail in \cite{Avin2019}.
+
 We have evaluated our implementation using subsets of these traces. For \dbmocfe{} we have used the first 250k requests in a setting with 1024 nodes. 
 For \dbmocfe{} we examine the case where the number of servers is $\ell=32$, each of size $k=32$.
 For \fb{} we have restricted the trace to 2048 nodes. For this restriction we have iteratively chosen the vertex pairs that communicate the most during the first 20 million requests 
@@ -1489,16 +1505,16 @@ The influence of $\alpha$ on the running time is investigated further in \cref{s
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/time_all_filtered_decompTree"}
-			\caption{time results for \adjDel}
+			\caption{Runtime results for \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/time_all_filtered_compDecomp"}
-			\caption{time results for \directDecomp}
+			\caption{Runtime results for \directDecomp}
 		\end{subfigure}		
 	\end{minipage}
-	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for all 3 data sets}\label{fig:all_runtimes_boxplot}
+	\caption{Comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for all 3 data sets}\label{fig:all_runtimes_boxplot}
 \end{figure}
 
 \cref{fig:all_runtimes_boxplot} shows the results all data sets for \adjDel{} and \directDecomp{}. For the plots we have filtered the running times to only include updates which have led the respective algorithm to update, i.e. those updates where the communicating nodes belonged to different components at the time of the request. 
@@ -1510,28 +1526,28 @@ We first compare the run times of both algorithms for the hpc data sets before w
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/time_hpc_filtered_decompTree"}
-			\caption{time results for \adjDel}
+			\caption{Runtime results for \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/time_hpc_filtered_compDecomp"}
-			\caption{time results for \directDecomp}
+			\caption{Runtime results for \directDecomp}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/barplot_time_hpc_filtered_decompTree"}
-			\caption{total time for \adjDel}
+			\caption{Total time for \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/barplot_time_hpc_filtered_compDecomp"}
-			\caption{total time for \directDecomp}
+			\caption{Total time for \directDecomp}
 		\end{subfigure}		
 	\end{minipage}
-	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for both hpc traces}\label{fig:hpc_runtimes_boxplot_restricted}
+	\caption{Comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for both hpc traces}\label{fig:hpc_runtimes_boxplot_restricted}
 \end{figure}
 
 \cref{fig:hpc_runtimes_boxplot_restricted} shows plots for run times of \adjDel{} 
@@ -1542,7 +1558,7 @@ in the bottom. The figure shows that \adjDel{} is considerably faster for both h
 \begin{figure}
 	\centering
 	\includegraphics*[height=6cm]{"plots/plot_facebook_time_to_size"}
-	\caption{relation of size to time for \fb{} for \adjDel{}}\label{fig:fb_size_to_time}
+	\caption{Relation of size to time for \fb{} for \adjDel{}}\label{fig:fb_size_to_time}
 \end{figure}
 
 \cref{fig:fb_size_to_time} illustrates the relation of the time need for handling a 
@@ -1564,7 +1580,7 @@ Next we discuss the influence of $\alpha$ on the running time of \adjDel{}.
 	\centering
 	\includegraphics*[height=6cm]{"plots/boxplot_varying_alphas_mocfe_filtered"}
 	\includegraphics*[height=6cm]{"plots/plot_varying_alphas_mocfe"}
-	\caption{runtime boxplot of \adjDel{} for \dbmocfe{} for different values of $\alpha$}
+	\caption{Runtime boxplot of \adjDel{} for \dbmocfe{} for different values of $\alpha$}
 	\label{fig:alpha_influence}
 \end{figure}
 
@@ -1579,23 +1595,23 @@ as the update times may increase.
 \subsection{Cost Evaluation}
 
 Finally we evaluate the cost of our algorithm, i.e. both the communication as well 
-as the migration cost. We compare our algorithm with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{}.
+as the migration cost. We compare our algorithm with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework \cite{Karypis1998, Karypis1998a} which we will refer to from now on as \static{}.
 
 \begin{figure}[h]
 	\centering
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/plot_cost_decompTree"}
-			\caption{cost of \adjDel}
+			\caption{Cost of \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
 			\includegraphics*[width=\linewidth]{"plots/plot_cost_static"}
-			\caption{cost of \static{}}
+			\caption{Cost of \static{}}
 		\end{subfigure}		
 	\end{minipage}
-	\caption{comparison of the costs of \adjDel{} (left) and \static{} (right) for all 3 data sets}\label{fig:all_cost_barplot}
+	\caption{Comparison of the costs of \adjDel{} (left) and \static{} (right) for all 3 data sets}\label{fig:all_cost_barplot}
 \end{figure}
 
 \cref{fig:all_cost_barplot} shows the costs of \adjDel{} and \static{} for \fb{}, \dbmocfe{} and \dbnekbone{}.
