@@ -1472,8 +1472,6 @@ We also compare our algorithm to reference algorithms.
 \subsection{Reference Algorithms}
 \label{algSection}
 
-\stefan{Herr Forner, wollen wir hier CorDel noch entfernen?}
-
 We compare our algorithm to reference algorithms. 
 We consider our algorithm based on maintaining a second-order partition of the nodes into components we discussed in \cref{algIdeas}, 
 i.e. \adjDel{} where on a component deletion all edges inside of and adjacent to the component are deleted and \coreDel{} which only deletes internal edges. 
@@ -1530,60 +1528,81 @@ The influence of $\alpha$ on the running time is investigated further in \cref{s
 	\centering
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/time_all_filtered_decompTree"}
+			\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_decompTree}
 			\caption{time results for \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/time_all_filtered_compDecomp"}
+			\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_compDecomp}
 			\caption{time results for \directDecomp}
 		\end{subfigure}		
 	\end{minipage}
-	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for all 3 data sets}\label{fig:all_runtimes_boxplot}
+	\begin{subfigure}[b]{0.48\linewidth}
+		\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_coreDel}
+		\caption{time results for \coreDel{}}
+	\end{subfigure}
+	\caption{comparison of the running times of \adjDel{} (top left), \directDecomp{} (top right) and \coreDel{} (bottom) for all 3 data sets}\label{fig:all_runtimes_boxplot}
 \end{figure}
 
 \cref{fig:all_runtimes_boxplot} shows the results all data sets for \adjDel{} and \directDecomp{}. For the plots we have filtered the running times to only include updates which have led the respective algorithm to update, i.e. those updates where the communicating nodes belonged to different components at the time of the request. 
-We can see that for both algorithms \fb{} produces by far the longest run time and that \directDecomp{} performs significantly better for \fb{}.
-We first compare the run times of both algorithms for the hpc data sets before we discuss the run times for \fb{} in greater detail.
+We can see that for all three algorithms \fb{} produces by far the longest run time and that \directDecomp{} performs significantly better than \adjDel{} and \coreDel{} for \fb{}.
+We first compare the run times of the three algorithms for the hpc data sets before we discuss the run times for \fb{} in greater detail.
 
 \begin{figure}
 	\centering
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/time_hpc_filtered_decompTree"}
+			\includegraphics*[width=\linewidth]{plots/new_time_hpc_filtered_decompTree}
 			\caption{time results for \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/time_hpc_filtered_compDecomp"}
-			\caption{time results for \directDecomp}
-		\end{subfigure}		
-	\end{minipage}
-	\begin{minipage}{0.48\linewidth}
-		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/barplot_time_hpc_filtered_decompTree"}
+			\includegraphics*[width=\linewidth]{plots/new_barplot_time_hpc_filtered_decompTree}
 			\caption{total time for \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/barplot_time_hpc_filtered_compDecomp"}
-			\caption{total time for \directDecomp}
+			\includegraphics*[width=\linewidth]{plots/new_time_hpc_filtered_compDecomp}
+			\caption{time results for \directDecomp}
+			
 		\end{subfigure}		
 	\end{minipage}
-	\caption{comparison of the running times of \adjDel{} (left) and \directDecomp{} (right) for both hpc traces}\label{fig:hpc_runtimes_boxplot_restricted}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{plots/new_barplot_time_hpc_filtered_compDecomp}
+			\caption{total time for \directDecomp}
+			
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{plots/new_time_hpc_filtered_coreDel}
+			\caption{time results for \coreDel{}}
+		\end{subfigure}		
+	\end{minipage}
+	\begin{minipage}{0.48\linewidth}
+		\begin{subfigure}[b]{\linewidth}
+			\includegraphics*[width=\linewidth]{plots/new_barplot_time_hpc_filtered_coreDel}
+			\caption{total time for \coreDel{}}
+		\end{subfigure}		
+	\end{minipage}
+	\caption{comparison of the running times of \adjDel{} (top), \directDecomp{} (middle) and \coreDel{}(bottom) for both hpc traces}\label{fig:hpc_runtimes_boxplot_restricted}
 \end{figure}
 
-\cref{fig:hpc_runtimes_boxplot_restricted} shows plots for run times of \adjDel{} 
-and \directDecomp{} for the HPC traces. In the top of the figure you can see the 
+\cref{fig:hpc_runtimes_boxplot_restricted} shows plots of run times of \adjDel{}, 
+\directDecomp{} and \coreDel{} for the HPC traces. On the left of the figure you can see the 
 distribution of the update times over the requests while the total times are shown 
-in the bottom. The figure shows that \adjDel{} is considerably faster for both hpc traces.
+on the right. The figure shows that \adjDel{} is the fastest for both hpc traces while \coreDel{}
+is faster than \directDecomp{}. This indicates that the decomposition tree data 
+structure which both \adjDel{} and \coreDel{} use may be a significant advantage 
+for the HPC traces.
 
 \begin{figure}
 	\centering
-	\includegraphics*[height=6cm]{"plots/plot_facebook_time_to_size"}
+	\includegraphics*[height=8cm]{plots/plot_facebook_time_to_size}
 	\caption{relation of size to time for \fb{} for \adjDel{}}\label{fig:fb_size_to_time}
 \end{figure}
 
@@ -1604,9 +1623,9 @@ Next we discuss the influence of $\alpha$ on the running time of \adjDel{}.
 \label{sec:alpha_influence}
 \begin{figure}[h]
 	\centering
-	\includegraphics*[height=6cm]{"plots/boxplot_varying_alphas_mocfe_filtered"}
-	\includegraphics*[height=6cm]{"plots/plot_varying_alphas_mocfe"}
-	\caption{runtime boxplot of \adjDel{} for \dbmocfe{} for different values of $\alpha$}
+	\includegraphics[height=6cm]{plots/boxplot_varying_alphas_mocfe_decompTree}
+	\includegraphics*[height=6cm]{plots/plot_varying_alphas_mocfe}
+	\caption{runtime of \adjDel{} for \dbmocfe{} for different values of $\alpha$}
 	\label{fig:alpha_influence}
 \end{figure}
 
@@ -1620,29 +1639,33 @@ as the update times may increase.
 
 \subsection{Cost Evaluation}
 
-Finally we evaluate the cost of our algorithm, i.e. both the communication as well 
-as the migration cost. We compare our algorithm with the static graph partitioning algorithm METIS\_PartGraphRecursive implemented in the METIS framework (\cite{Karypis1998, Karypis1998a}) which we will refer to from now on as \static{}.
+Finally we evaluate the cost of \adjDel{} and coreDel{}, i.e. both the communication as well 
+as the migration cost, by comparing their results with those produced by \static{}.
 
 \begin{figure}[h]
 	\centering
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/plot_cost_decompTree"}
+			\includegraphics*[width=\linewidth]{plots/plot_cost_decompTree}
 			\caption{cost of \adjDel}
 		\end{subfigure}		
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/plot_cost_static"}
-			\caption{cost of \static{}}
-		\end{subfigure}		
+			\includegraphics*[width=\linewidth]{plots/plot_cost_coreDel}
+			\caption{cost of \coreDel{}}
+		\end{subfigure}	
 	\end{minipage}
-	\caption{comparison of the costs of \adjDel{} (left) and \static{} (right) for all 3 data sets}\label{fig:all_cost_barplot}
+	\begin{subfigure}[b]{0.48\linewidth}
+		\includegraphics*[width=\linewidth]{plots/plot_cost_static}
+		\caption{cost of \static{}}
+	\end{subfigure}		
+	\caption{comparison of the costs of \adjDel{} (top left), \coreDel{} (top right) and \static{} (right) for all 3 data sets}\label{fig:all_cost_barplot}
 \end{figure}
 
 \cref{fig:all_cost_barplot} shows the costs of \adjDel{} and \static{} for \fb{}, \dbmocfe{} and \dbnekbone{}.
-Note that for \fb{} the cost of \adjDel{} (9932) is actually lower than the cost of \static{} (12491). For the HPC traces
-\static{} is able to achieve significantly lower cost than our algorithm \adjDel{}.
+Note that for \fb{} the cost of \adjDel{} (9932) is actually lower than the cost of \static{} (12491). The cost of \coreDel{} (10222) is only slightly larger than that of \adjDel{}.
+ For the HPC traces \static{} is able to achieve significantly lower cost than the other algorithms.
 
 Note though that there is no way to specify partition sizes exactly for \static{}. Thus \static{} may not produce a perfect 
 static partitioning, i.e. one where each partition is of size $k$ like it is even expected of \opt{}.
