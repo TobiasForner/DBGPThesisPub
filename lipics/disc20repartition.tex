@@ -29,6 +29,7 @@
 %\usepackage{verbatim}
 
 \usepackage{qtree}
+\usepackage[dvipsnames]{xcolor}
 
 \usepackage{tikz}%used for examples for problems in earlier analysis
 
@@ -619,18 +620,36 @@ We combine our results from \cref{crep_req_bound} and \cref{crep_mig_bound} in t
 We next bound the cost on \opt{} by assigning cost to \opt{} based on the size of the components $C$ that \adjDel{} deletes and the associated adjacent edges $\halo(C)$ which \adjDel{} resets to zero during the deletion of $C$. In order to achieve this we introduce some additional notions.
 First we define the term \textit{offline interval} of a node $v$ to be the time between two migrations of $v$ in the solution of \opt{}. More specifically an offline interval of node $v$ either starts at time zero (if it is the first offline interval of $v$) or after a migration of $v$ and ends with the next migration of node $v$ that \opt{} performs.
 
-Furthermore we say that an offline interval is contained in the epoch $\epoch(C)$ of a component $C\in\del{}(\sigma)$ if it ends before the time $\tau(C)$. Note that $\tau(C)$ is both the time of the creation of $C$ in the solution of \adjDel{} and the time of its deletion as $C\in\del{}(\sigma)$.
-We assign a request $r$ involving the node $v$ to an offline interval of $v$ if it is both the first offline interval of one of the end points of $r$ that ends and if the offline interval ends before the deletion of the edge representing $r$ due to a component deletion.
-The requests from $\mathcal{H}=\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that are not assigned to any offline interval are then those which are deleted due to the deletion of a component that took place before the corresponding offline interval ended.
-Let $P$ denote the set of edges from $\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that both \adjDel{} and \opt{} pay for and let $I$ denote the set of requests we have assigned to offline intervals.
+Furthermore we say that an offline interval is contained in the epoch $\epoch(C)$ of a component $C\in\del{}(\sigma)$ if it ends before the time $\tau(C)$. 
+Note that $\tau(C)$ is both the time of the creation of $C$ in the solution of \adjDel{} and the time of its deletion as $C\in\del{}(\sigma)$.
+We assign a request $r$ involving the node $v$ to an offline interval of $v$ if it is both the first offline interval of one of the end points of $r$ 
+that ends and if the offline interval ends before the deletion of the edge representing $r$ due to a component deletion.
+The requests from $\mathcal{H}=\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that are not assigned to any offline interval are then those which are deleted 
+due to the deletion of a component that took place before the corresponding offline interval ended.
+Let $P$ denote the set of edges from $\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that both \adjDel{} and \opt{} pay for and let $I$ denote the set of requests 
+we have assigned to offline intervals.
 
-These definitions are illustrated in \cref{analysis_def_illustration}. Note that we only show some requests explicitly for the sake of readability. The grey horizontal lines represent the nodes at each time $t$. The red outline surrounds the (node,time) pairs of $\epoch(C)$. Blue dots mark migrations of the corresponding node performed by \opt{} while red dots mark deletions of the component the node was assigned to at that time. The dashed vertical lines in black mark requests that are assigned to another component because it is deleted before component $C$. The dotted green line is a request from $\halo(C)$ assigned to the offline interval of node 5 between the two blue dots. The regular green lines are assigned to an offline interval which is not contained in $\epoch(C)$. We define this concept more formally at a later point in the analysis. The lines in magenta are sample requests from $\core(C)$.
+These definitions are illustrated in \cref{analysis_def_illustration}. Note that we only show some requests explicitly for the sake of readability. 
+The grey horizontal lines represent the nodes at each time $t$. The red outline surrounds the (node,time) pairs of $\epoch(C)$. 
+Blue dots mark migrations of the corresponding node performed by \opt{} while red dots mark deletions of the component the node was assigned to at that time. 
+The dashed vertical lines in black mark requests that are assigned to another component because it is deleted before component $C$. 
+The dashed green line is a request from $\halo(C)$ assigned to the offline interval of node 5 between the two blue dots. The regular green lines are assigned to 
+an offline interval which is not contained in $\epoch(C)$. We define this concept more formally at a later point in the analysis. 
+The lines in magenta are sample requests from $\core(C)$.
 
 We start by bounding the total edge weight (the total number of requests) we assign to any one offline interval when limiting ourselves to requests from $\mathcal{H}$ which \adjDel{} pays for but \opt{} does not. We denote the set of these requests by $N$, i.e. $N=\mathcal{H}\backslash P$. Note that $\mathcal{H}$ only contains requests which \adjDel{} payed for due to the definition of $\halo(C)$.
 
 \begin{center}
 	\begin{figure}
 		\begin{tikzpicture}
+
+			\tikzstyle{comp outline}=[BrickRed, ultra thick]
+			\tikzstyle{halo requests other comp}=[black, dashed, ultra thick]
+			\tikzstyle{mig}=[blue, fill]
+			\tikzstyle{deletion}=[BrickRed, fill]
+			\tikzstyle{haloReqOptInt}=[ForestGreen, dashed, ultra thick]
+			\tikzstyle{haloReqEnd}=[ForestGreen, ultra thick]
+			\tikzstyle{coreReq}=[magenta, ultra thick]
 		
 		%axis
 		\draw [<->] (1,6) -- (1,-2) -- (14,-2);
@@ -655,37 +674,60 @@ We start by bounding the total edge weight (the total number of requests) we ass
 		\draw [gray] (1,5) -- (14,5);
 		
 		%red component outline
-		\draw [red] (3,5.5) -- (3,2.5) -- (6,2.5) -- (6,1.5) -- (4,1.5) -- (4,0.5) -- (12,0.5) -- (12,5.5) -- (3,5.5);
+		\draw [style = comp outline] (3,5.5) -- (3,2.5) -- (6,2.5) -- (6,1.5) -- (4,1.5) -- (4,0.5) -- (12,0.5) -- (12,5.5) -- (3,5.5);
 		
 		%core(C) edges
-		\draw [magenta] (4,3) -- (4,5);
-		\draw [magenta] (10,1) -- (10,3);
-		\draw [magenta] (11,2) -- (11,5);
+		\draw [coreReq] (4,3) -- (4,5);
+		\draw [coreReq] (10,1) -- (10,3);
+		\draw [coreReq] (11,2) -- (11,5);
 		
 		
 		%blue points for opt migrations	
-		\draw [fill,blue] (8,3) circle [radius=0.1];
-		\draw [fill,blue] (2,3) circle [radius=0.1];		
+		\draw [mig] (8,3) circle [radius=0.1];
+		\draw [mig] (2,3) circle [radius=0.1];		
 		
 		
 		%green request lines for halo
-		\draw [green] (9,3) -- (9,-1);
-		\draw [green] (9.5,3) -- (9.5,0);
+		\draw [haloReqEnd] (9,3) -- (9,-1);
+		\draw [haloReqEnd] (9.5,3) -- (9.5,0);
 		
 		
 		%dashed green request lines for those assigned to an offline interval
-		\draw [green, dotted, ultra thick] (7.5,3) -- (7.5,0);
+		\draw [haloReqOptInt] (7.5,3) -- (7.5,0);
 		
 		
 		%red dots for deletions of other components by crep
-		\draw [fill,red] (7,-1) circle [radius=0.1];
+		\draw [deletion] (7,-1) circle [radius=0.1];
 		
 		%dashed black lines for requests assigned to other component
-		\draw [black, dashed] (6,1) -- (6,-1);
-		\draw [black, dashed] (5,3) -- (5,-1);
+		\draw [halo requests other comp] (6,1) -- (6,-1);
+		\draw [halo requests other comp] (5,3) -- (5,-1);	
 		
 		\end{tikzpicture}
-		\caption{Illustration of definitions used in the analysis}\label{analysis_def_illustration}
+
+		\centering
+		\begin{tikzpicture}[
+			compOutline/.style={shape=rectangle, draw=BrickRed, line width=2},
+			optMig/.style={shape = circle, fill=blue, inner sep=0pt,minimum size=6pt},
+			optDel/.style={shape = circle, fill=BrickRed, inner sep=0pt,minimum size=6pt}]
+			\matrix [draw,below left] at (10,0) {
+			\tikzstyle{comp outline}=[BrickRed, ultra thick]
+			\tikzstyle{halo requests other comp}=[black, dashed, ultra thick]
+			\tikzstyle{mig}=[blue, fill]
+			\tikzstyle{deletion}=[BrickRed, fill]
+			\tikzstyle{haloReqOptInt}=[ForestGreen, dashed, ultra thick]
+			\tikzstyle{haloReqEnd}=[ForestGreen, ultra thick]
+			\tikzstyle{coreReq}=[magenta, ultra thick]
+  \node [compOutline,label=right:\epoch($C$) outline] {}; \\
+  \node [optMig,label=right:\opt{} migration]{};\\
+  \node[optDel, label=right:deletion of component]{};\\
+};
+		\end{tikzpicture}
+		\caption{Illustration of definitions used in the analysis; vertical lines 
+		represent requests between the corresponding nodes; dashed black requests 
+		are assigned to another component; the dashed green line is assigned to 
+		the offline interval of node 5; the regular green lines are assigned to 
+		an offline interval which is not contained in $\epoch(C)$}\label{analysis_def_illustration}
 	\end{figure}
 \end{center}
 
