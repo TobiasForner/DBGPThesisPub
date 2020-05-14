@@ -337,7 +337,7 @@ nodes from $X$ and $Y$, i.e. $\sum_{e=\{u,v\}\in E:u\in X, v\in Y}w(e)$ is the v
 
 The \textit{connectivity} of a graph $G$ is equal to the value of a minimum edge cut of $G$. This definition will be used in order to define the communication components our algorithm maintains as these are subsets of $V$ which induce subgraphs of high connectivity. We explain the concept of components in greater detail later.
 
-Furthermore we define the term $(s,t)$\textit{-cut} as a cut $(X,Y)$ for which $s\in X$ and $Y\in X$, i.e. a $(s,t)$-cut separates the nodes $s$ and $t$ in $G$. Then a \textit{minimum $(s,t)$-cut} is a $(s,t)$-cut of minimum value. Note that a minimum $(s,t)$-cut is not necessarily a minimum cut.
+Furthermore we define the term $(s,t)$\textit{-cut} as a cut $(X,Y)$ for which $s\in X$ and $t\in Y$, i.e. a $(s,t)$-cut separates the nodes $s$ and $t$ in $G$. Then a \textit{minimum $(s,t)$-cut} is a $(s,t)$-cut of minimum value. Note that a minimum $(s,t)$-cut is not necessarily a minimum cut.
 
 Finally we call an injective function $m:X\rightarrow Y$ a \textit{mapping of $X$ to $Y$}. We use this terminology for example when we talk about the assignment of nodes to servers.
 
@@ -387,7 +387,7 @@ for edge $e=\{u,v\}$, $w(e)$ represents the number of paid communication request
 The algorithm merges a set $S$ of components into a new component $C$ if the connectivity of the component graph induced by the components in $S$ is at least $\alpha$. After each edge insertion the algorithm checks whether there exists a new component set $S$ with $|S|>1$ which fulfills this requirement.
 
 If after any request and the insertion of the resulting edge the algorithm discovers a new subset $S$ of nodes whose induced subgraph has connectivity at least $\alpha$ and which is of cardinality at most $k$, it merges the components that form this set into one new component and collocates all the nodes in the resulting set on a single server. The algorithm reserves additional space $\min\{\lfloor\epsilon\cdot|C|\rfloor,k-|C|\}$ for each component on the server it is currently located on. Note that the additional reservation may be zero for components smaller than $1/\epsilon$. This reservation guarantees that nodes are not migrated too often for the analysis to work. This also limits the total space a component can use to a maximum of $k$. This makes sense as a component whose size exceeds $k$ is deleted (rather than merged).
-To this end the algorithms keep track of the reservations for each component.
+To this end \adjDel{} keeps track of the reservations for each component.
 
 The algorithm uses augmentation $2+\epsilon$ in order to guarantee that the collocation of such component sets of at most $k$ individual communication nodes is always possible without moving a node not in $C$. This guarantees by an averaging argument that there is always at least one cluster with capacity at least $k$, which a newly merged component can be moved to.
 
@@ -767,7 +767,7 @@ We show the following lower bound on the cost of \opt{} for migrations from $\op
 \begin{proof}
 	For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. Note that the nodes involved in requests from $R(C)$ were not moved by \opt{} during the processing of requests from $R(C)$ until the time of deletion of $C$ as otherwise they would be assigned to an offline interval.
 	
-	The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+|R(C)|/\alpha$ since requests from $R(C)$ have not led \adjDel{} to perform any migrations. Because of this fact \opt{} must have placed those nodes on at least $\frac{|C|+|R(C)|/\alpha}{k}$ different servers. As \opt{} does not pay for any requests from $R$ it follows that \opt{} must have placed the nodes from $C$ in $(|C|+|R(C)|/(\alpha k)$ different servers.
+	The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+|R(C)|/\alpha$ since requests from $R(C)$ have not led \adjDel{} to perform any migrations. As \opt{} does not pay for any requests from $R(C)$ it follows that \opt{} must have placed the nodes from $C$ in $(|C|+|R(C)|/(\alpha k)$ different servers.
 	
 	We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. In this case \opt{} must partition a graph containing the nodes from $C$ which are connected via edges representing the requests from $\core(C)$. As stated earlier \opt{} placed those nodes in $(|C|+|R(C)|/(\alpha k)$ different servers at time $\tau(C)$. As \adjDel{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} gives that \opt{} has to cut at least edges of total weight $(|C|+|R(C)|/(\alpha k)\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
 	
@@ -1502,8 +1502,6 @@ Furthermore, recall that \adjDel{} always maintains a second-order partition of 
 into components, and when a component is deleted, all edges inside of and adjacent to the component are reset. 
 A natural alternative, is to reset internal edges only on this occasion;
 we will refer to this algorithmic variant as $\coreDel$.
-The \adjDel{} and $\coreDel$ 
-algorithms start with randomly initialized mappings of nodes to servers.
 
 Another natural reference algorithm is a static graph partitioning;
 to this end, we use the METIS\_PartGraphRecursive algorithm 
@@ -1566,7 +1564,7 @@ and alternative algorithms.
 		\begin{minipage}{0.48\linewidth}
 			\begin{subfigure}[b]{\linewidth}
 				\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_decompTree}
-				\caption{time results for \adjDel}
+				\caption{Runtime results for \adjDel}
 			\end{subfigure}		
 		\end{minipage}
 		\begin{minipage}{0.48\linewidth}
@@ -1582,7 +1580,7 @@ and alternative algorithms.
 		\caption{Comparison of the running times of \adjDel{} (top left), \directDecomp{} (top right) and \coreDel{} (bottom) for all 3 data sets}\label{fig:all_runtimes_boxplot}
 	\end{figure}
 
-\cref{fig:all_runtimes_boxplot} shows the results of all data sets for \adjDel{} and \directDecomp{}.  Here
+\cref{fig:all_runtimes_boxplot} shows the results of all data sets for \adjDel{}, \directDecomp{} and \coreDel{}.  Here
 we filtered the running times to only include updates which have led the respective algorithm to update, i.e. those updates where the communicating nodes belonged to different components at the time of the request. 
 We can see that for all three algorithms \fb{} produces by far the longest runtime and that \directDecomp{} performs significantly better than \adjDel{} and \coreDel{} for \fb{}.
 We first compare the runtimes of the three algorithms for the hpc data sets before we discuss the runtimes for \fb{} in greater detail.
@@ -1700,14 +1698,19 @@ by the fact that \directDecomp{} is significantly faster for \fb{} as one can se
 
 It is also interesting to study 
 the influence of $\alpha$ on the running time of \adjDel{} and \coreDel{}.
-\cref{fig:alpha_influence} shows a plot of the running time of \adjDel{} for $\alpha\in\{1,2,4,8,16\}$. In order to improve the readability,
-only requests which led to an update of the data structure are included. The results show that \adjDel{} is slower for $\alpha=1$ than for $\alpha\in\{2,4\}$.
-This may be due to the fact that lower values of $\alpha$ lead \adjDel{} to 
+\cref{fig:alpha_influence} shows a plot of the running time of \adjDel{} and 
+\coreDel{} for $\alpha\in\{1,2,4,8,16\}$. In order to improve the readability,
+only requests which led to an update of the data structure are included. 
+The results show that both algorithms are slower for $\alpha=1$ than for 
+$\alpha\in\{2,4\}$.
+This may be due to the fact that lower values of $\alpha$ lead the algorithms to 
 update the tree structure more frequently.
-Especially for $\alpha=1$ every inserted edge leads to a merge, as edges are only inserted between different components and $\alpha$ 
-is both the cost for a node migration as well as the connectivity threshold for merging for \adjDel{}.
+Especially for $\alpha=1$ every inserted edge leads to a merge, as edges are only 
+inserted between different components and $\alpha$ is both the cost for a node
+ migration as well as the connectivity threshold for merging for \adjDel{} and \coreDel{}.
 The remaining results mirror the expectation that the increase in the potential height of the decomposition tree also increases the required time 
-as the update times may increase.
+as the update times may increase. This effect increases the runtime of \coreDel{} more than that \adjDel{}
+leading to significantly better runtime for \adjDel{} for $\alpha=16$.
 
 \subsection{Cost Evaluation}
 
