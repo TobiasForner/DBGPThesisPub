@@ -312,8 +312,7 @@ approximations, as we will show, but also requires a new analysis.
 
 We not only evaluate our algorithm analytically but also in simulations,
 based on real datacenter workloads. 
-To this end, 
-we also perform algorithm engineering and make 
+To this end, we also perform algorithm engineering and make 
 slight adaptations of our algorithms in order to improve their results.
 %We further present a second algorithm, \coreDel, 
 %an efficient heuristic which serves us as a baseline for comparison,
@@ -370,7 +369,7 @@ where $\onl{}(\sigma)$ and $\opt{}(\sigma)$ denote the cost of serving input seq
 
 We consider a model with augmentation (as in prior work \cite{Avin2016}),
 and allow the online algorithm to use larger capacities per server. 
-In particular, the online algorithm is allowed to assign $(1+\epsilon)\cdot n/\ell$ nodes to each server where $\epsilon>0$. 
+In particular, the online algorithm is allowed to assign $(2+\epsilon)\cdot n/\ell$ nodes to each server where $\epsilon>0$. 
 This augmented online algorithm is then compared with the optimal offline algorithm \opt{} which is not allowed to use any augmentation.
 
 Throughout this paper, 
@@ -385,14 +384,16 @@ later in this paper.
 In general, \adjDel{} relies on a second-order partitioning of the communication nodes into \textit{communication components} which represent node-induced sub-graphs of the original communication graph given by the requests from the input sequence $\sigma$. 
 Initially each node forms a singleton component, but as the input sequence $\sigma$ is revealed, new communication patterns unfold. The algorithm keeps track of these patterns by maintaining a graph in which the nodes represent the actual communication nodes and the weighted edges represent the number of communication requests between nodes that were part of different components at the time of the request; that is, 
 for edge $e=\{u,v\}$, $w(e)$ represents the number of paid communication requests between $u$ and $v$. We say that a communication request between nodes $u$ and $v$ is \textit{paid} if the nodes are located on different servers at the time of the request.
-Both algorithms merge a set $S$ of components into a new component $C$ if the connectivity of the component graph induced by the components in $S$ is at least $\alpha$. After each edge insertion the algorithm checks whether there exists a new component set $S$ with $|S|>1$ which fulfills this requirement.
+The algorithm merges a set $S$ of components into a new component $C$ if the connectivity of the component graph induced by the components in $S$ is at least $\alpha$. After each edge insertion the algorithm checks whether there exists a new component set $S$ with $|S|>1$ which fulfills this requirement.
 
 If after any request and the insertion of the resulting edge the algorithm discovers a new subset $S$ of nodes whose induced subgraph has connectivity at least $\alpha$ and which is of cardinality at most $k$, it merges the components that form this set into one new component and collocates all the nodes in the resulting set on a single server. The algorithm reserves additional space $\min\{\lfloor\epsilon\cdot|C|\rfloor,k-|C|\}$ for each component on the server it is currently located on. Note that the additional reservation may be zero for components smaller than $1/\epsilon$. This reservation guarantees that nodes are not migrated too often for the analysis to work. This also limits the total space a component can use to a maximum of $k$. This makes sense as a component whose size exceeds $k$ is deleted (rather than merged).
 To this end the algorithms keep track of the reservations for each component.
 
 The algorithm uses augmentation $2+\epsilon$ in order to guarantee that the collocation of such component sets of at most $k$ individual communication nodes is always possible without moving a node not in $C$. This guarantees by an averaging argument that there is always at least one cluster with capacity at least $k$, which a newly merged component can be moved to.
 
-If the subset has cardinality greater than $k$, the resulting component is deleted. The definition of this deletion process is the main difference between our algorithms which we discuss in the following subsections. The common part of both algorithms is also summarized in the form of pseudocode in \cref{highLevelAlg}. Note that the subroutine \textit{delete(Y)} of a component set $Y$ is different for each of the algorithms. 
+If the subset has cardinality greater than $k$, the resulting component is deleted.  
+This general structure of our algorithm is also summarized in the form of pseudocode 
+in \cref{highLevelAlg} and \cref{mergeAndRes}. 
 In the pseudocode description we denote the reservation of a component $C$ by $res(C)$ and the current server it is mapped to by $serv(C)$. The free capacity of a server $i$ is denoted by $cap(i)$.
 
 \begin{algorithm}[t]
@@ -459,6 +460,7 @@ component set reaches connectivity $\alpha$, while prior approaches do so once t
 \end{algorithm}
 
 \adjDel{} resets all the edges contained in the deleted component $C$ and also resets the weights of edges \textit{adjacent} to $C$, i.e. all edges $e=\{u,v\}$ are reset to zero if $u$ or $v$ were contained in component $C$ at the time of its deletion. The deletion method is also described in pseudocode in \cref{adj_del_alg}.
+Furthermore the merge and deletion process is illustrated in \cref{exOldCrep}.
 
 As we will see, the idea for the competitive analysis is to relate the cost of both \opt{} and \adjDel{} to the deleted components in the solution of \adjDel{}.
 The fact that \adjDel{} also resets adjacent edges means that we can uniquely identify requests with the deleted component whose deletion led to the reset of the corresponding edge weights to zero. 
@@ -491,17 +493,19 @@ The fact that \adjDel{} also resets adjacent edges means that we can uniquely id
 	\request{1}{6}{12}
 	\request{1}{7}{13}
 	\request{1}{7}{14}
-	\request{1}{3}{15}
+	\request{1}{4}{15}
 	
 	\end{axis}
 	
 	
 	\end{tikzpicture}
-	\caption{Illustration for the \adjDel{} approach}\label{exOldCrep}
+	\caption{Illustration for the \adjDel{} approach: The horizontal lines represent the nodes over time, vertical lines represent request between the respective end points.  We consider the case where $\alpha=3$ and $k=3$.
+	The first six requests lead \adjDel{} to merge the nodes $\{0,1,3\}$ into
+	a new component $C$. The following eight requests connect the nodes 4, 5, 6 and 7 to $C$,
+	but the respective cuts have value 2, hence no merge is performed. At time $t=15$ finally the node 4 gets merged with $C$ which results in a component of size 4 which gets deleted.
+	During this deletion all edges shown in the figure are deleted, both those that led to the merges and the remaining ones.}\label{exOldCrep}
 	
 \end{figure}		
-
-\stefan{Herr Forner: bitte Figure noch einwenig besser beschreiben in caption.}
 
 \section{Competitive Analysis}
 \label{comp_analysis_section}
@@ -737,9 +741,6 @@ We start by bounding the total edge weight (the total number of requests) we ass
 	\end{figure}
 \end{center}
 
-\stefan{Herr Forner, koennen Sie die farbigen Linien in der Figure einwenig dicker machen
-und die rote und gruene Farbe einwenig dunkler waehlen?}
-
 \begin{lemma}
 	\label{offl_int_lemma}
 	We assign at most $k\cdot\alpha$ requests from $N$ to any one offline interval.
@@ -776,7 +777,7 @@ We show the following lower bound on the cost of \opt{} for migrations from $\op
 	Note that we only added edges of weight $\alpha$ to the graph and hence this graph is also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight at least $\frac{|C|+|R(C)|/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
 	
 	In both cases only edges representing either requests from $\optreq(C)$ or migrations from $\optmig(C)$ were cut.
-	As the sets $core(C)$, $R(C)$ , $core(D)$ and $R(D)$ are disjoint for two different components $C,D\in\del(\sigma)$ per their definition we conclude that
+	As the sets $\core(C)$, $R(C)$ , $\core(D)$ and $R(D)$ are disjoint for two different components $C,D\in\del(\sigma)$ per their definition we conclude that
 	\begin{align*}
 	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq |C|/k\cdot\alpha+|R(C)|/k.
 	\end{align*}
@@ -1513,11 +1514,6 @@ from the requests, and give it as input to \static{}.
 We then compute the cost of \static{} due to migrations from the random initial mapping of nodes to servers; in addition, we charge 
 the remote requests, i.e. the total weight of edges between nodes of the communication graph which \static{} mapped to different servers.
 The algorithms start with randomly initialized mappings of nodes to servers.
-\stefan{Herr Forner: vielleicht muessen wir delta gar nicht einfuehren, und
-alles mit epsilon machen, wie vorne. waere das moeglich?}
-
-\stefan{Herr Forner: in figures und tabellen vermeidet man 
-grosse zahlen, also statt 100000 eher 100k etc.}
 
 \subsection{Traffic Traces and Methodology}
 \label{inputDesc}
@@ -1526,11 +1522,11 @@ grosse zahlen, also statt 100000 eher 100k etc.}
 	\begin{center}
 		\begin{tabular}{|l|c|c|c|c|c|c|}
 			\hline
-			trace & nodes & requests & $\ell$ & $k$ & $\alpha$ & $\delta$\\
+			trace & nodes & requests & $\ell$ & $k$ & $\alpha$ & $\epsilon$\\
 			\hline
-			\dbnekbone{} & 512 & 250 000 & 32 & 16 & 3 & 2.1 \\
-			\dbmocfe{} & 1024 & 250 000 & 32 & 32 & 3 & 2.1 \\
-			\fb{} & 2048 & 10 000 & 64 & 32 & 3 & 2.1 \\
+			\dbnekbone{} & 512 & 250 000 & 32 & 16 & 3 & 0.1 \\
+			\dbmocfe{} & 1024 & 250 000 & 32 & 32 & 3 & 0.1 \\
+			\fb{} & 2048 & 10 000 & 64 & 32 & 3 & 0.1 \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -1557,42 +1553,39 @@ servers is $\ell=32$ of size $k=32$.
 The runs are then performed on the first 10k of these requests. Similarly we  restricted \dbnekbone{} to 512 nodes and 
 used the first 250k requests for this setting; 
 this data set is then evaluated in a scenario where the number of servers is $\ell=32$, each of size $k=32$.
-For all configurations we use $\alpha=3$ and $\delta=2.1$.
+For all configurations we use $\alpha=3$ and $\epsilon=0.1$.
 These configurations are summarized in \cref{fig:trace_overview}.
 The influence of $\alpha$ on the running time is investigated further in \cref{sec:alpha_influence}.
 
 \subsection{Runtime Evaluation}
 
-\begin{figure}[h]
-	\centering
-	\begin{minipage}{0.48\linewidth}
-		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_decompTree}
-			\caption{time results for \adjDel}
-		\end{subfigure}		
-	\end{minipage}
-	\begin{minipage}{0.48\linewidth}
-		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_compDecomp}
-			\caption{Runtime results for \directDecomp}
-		\end{subfigure}		
-	\end{minipage}
-	\begin{subfigure}[b]{0.48\linewidth}
-		\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_coreDel}
-		\caption{Runtime results for \coreDel{}}
-	\end{subfigure}
-	\caption{Comparison of the running times of \adjDel{} (top left), \directDecomp{} (top right) and \coreDel{} (bottom) for all 3 data sets}\label{fig:all_runtimes_boxplot}
-\end{figure}
+We evaluate the running time of \adjDel{} by considering different traces 
+and alternative algorithms. 
+	\begin{figure}[h]
+		\centering
+		\begin{minipage}{0.48\linewidth}
+			\begin{subfigure}[b]{\linewidth}
+				\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_decompTree}
+				\caption{time results for \adjDel}
+			\end{subfigure}		
+		\end{minipage}
+		\begin{minipage}{0.48\linewidth}
+			\begin{subfigure}[b]{\linewidth}
+				\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_compDecomp}
+				\caption{Runtime results for \directDecomp}
+			\end{subfigure}		
+		\end{minipage}
+		\begin{subfigure}[b]{0.48\linewidth}
+			\includegraphics*[width=\linewidth]{plots/new_time_all_filtered_coreDel}
+			\caption{Runtime results for \coreDel{}}
+		\end{subfigure}
+		\caption{Comparison of the running times of \adjDel{} (top left), \directDecomp{} (top right) and \coreDel{} (bottom) for all 3 data sets}\label{fig:all_runtimes_boxplot}
+	\end{figure}
 
-We evaluate the running time of \adjDel{} by 
-	considering different traces 
-	and alternative algorithms. 
-
-\cref{fig:all_runtimes_boxplot} shows the results all data sets for \adjDel{} and \directDecomp{}.  Here
+\cref{fig:all_runtimes_boxplot} shows the results of all data sets for \adjDel{} and \directDecomp{}.  Here
 we filtered the running times to only include updates which have led the respective algorithm to update, i.e. those updates where the communicating nodes belonged to different components at the time of the request. 
 We can see that for all three algorithms \fb{} produces by far the longest runtime and that \directDecomp{} performs significantly better than \adjDel{} and \coreDel{} for \fb{}.
 We first compare the runtimes of the three algorithms for the hpc data sets before we discuss the runtimes for \fb{} in greater detail.
-\stefan{ich glaube runtime ist besser als run time}
 
 \begin{figure}
 	\centering
@@ -1731,19 +1724,22 @@ and migration, we compare our algorithms \adjDel{} and \coreDel{} with \static{}
 	\end{minipage}
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
-			\includegraphics*[width=\linewidth]{"plots/plot_cost_static"}
-			\caption{Cost of \static{}}
-		\end{subfigure}		
+			\includegraphics*[width=\linewidth]{plots/plot_cost_coreDel}
+			\caption{Cost of \adjDel}
+		\end{subfigure}
 	\end{minipage}
-	\caption{Comparison of the costs of \adjDel{} (left) and \static{} (bottom) for all 3 data sets}\label{fig:all_cost_barplot}
+	\begin{subfigure}[b]{0.48\linewidth}
+		\includegraphics*[width=\linewidth]{"plots/plot_cost_static"}
+		\caption{Cost of \static{}}
+	\end{subfigure}	
+	\caption{Comparison of the costs of \adjDel{} (left), \coreDel{} (right) and \static{} (bottom) for all 3 data sets}\label{fig:all_cost_barplot}
 \end{figure}
 
-\cref{fig:all_cost_barplot} shows the costs of \adjDel{} and \static{} for \fb{}, \dbmocfe{} and \dbnekbone{}.
-Note that for \fb{} the cost of \adjDel{} is actually lower than the cost of \static{}. For the HPC traces
+\cref{fig:all_cost_barplot} shows the costs of \adjDel{}, \coreDel{} and \static{} for \fb{}, \dbmocfe{} and \dbnekbone{}.
+Note that for \fb{} the costs of \adjDel{} and \coreDel{} are actually lower than the cost of \static{}. For the HPC traces
 \static{} is able to achieve significantly lower cost than both \adjDel{} and \coreDel{}.
 However, keep in mind that \static{} is essentially an offline algorithm,
 which knows requests ahead of time; furthermore, we also note that 
-\static{} may not produce a perfectly 
-balanced partitioning.
+\static{} may not produce a perfectly balanced partitioning.
 
 \end{document}
