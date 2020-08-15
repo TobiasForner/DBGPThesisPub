@@ -358,8 +358,8 @@ into $\ell$ servers (henceforth sometimes also called clusters) of size $k$ each
 while minimizing both the cost due to communication and due to node migrations. 
 More formally we are given $\ell$ servers $V_0,...,V_{\ell-1}$, 
 each with capacity $k$ and an initial perfect mapping of $n=k\cdot \ell$ nodes to the $\ell$ servers, 
-i.e. each server is assigned exactly $k$ nodes. An input sequence $\sigma=(u_1, v_1), (u_2, v_2),...(u_i,v_i),...$ describes 
-the sequence of communication requests: the pair $(u_t, v_t)$ represents a communication request between the nodes 
+i.e. each server is assigned exactly $k$ nodes. An input sequence $\sigma=((u_1, v_1),1), ((u_2, v_2),2),...()(u_i,v_i),i),...$ describes 
+the sequence of communication requests: the pair $((u_t, v_t),t)$ represents a communication request between the nodes 
 $u_t$ and $v_t$ arriving at time $t$. At time $t$ the algorithm is allowed to perform node migrations at a cost of $\alpha>1$ per move. 
 After the migration step, the algorithm pays cost 1 if $u_t$ and $v_t$ are mapped to different servers and does not pay any cost otherwise. Note that an algorithm may also choose to perform no migrations at all.
 
@@ -386,7 +386,7 @@ we will also use $1+\epsilon$ as the basis for the logarithm.
 We first describe the basic algorithm underlying
 our approach, before presenting the polynomial-time implementation
 later in this paper.
-In general, \adjDel{} relies on a second-order partitioning of the communication nodes into \textit{communication components} which represent node-induced sub-graphs of the original communication graph given by the requests from the input sequence $\sigma$. 
+In general, \adjDel{} relies on a second-order partitioning of the communication nodes into \textit{communication components} which represent node-induced sub-graphs of the original communication graph given by the requests from the input sequence $\sigma$. \new{To this end we define a \textit{component} $C$ as the set of its nodes together with the time $t$ of its creation, i.e. $C=(\{v_1,v_2,...,v_k\}, t)$. For a component $B=(M, t)$ let $nodes(B)=M$ and $\tau(B)=t$}.
 Initially each node forms a singleton component, but as the input sequence $\sigma$ is revealed, new communication patterns unfold. The algorithm keeps track of these patterns by maintaining a graph in which the nodes represent the actual communication nodes and the weighted edges represent the number of communication requests between nodes that were part of different components at the time of the request; that is, 
 for edge $e=\{u,v\}$, $w(e)$ represents the number of paid communication requests between $u$ and $v$. We say that a communication request between nodes $u$ and $v$ is \textit{paid} if the nodes are located on different servers at the time of the request.
 The algorithm merges a set $S$ of components into a new component $C$ if the connectivity of the component graph induced by the components in $S$ is at least $\alpha$. After each edge insertion the algorithm checks whether there exists a new component set $S$ with $|S|>1$ which fulfills this requirement.
@@ -407,7 +407,7 @@ In the pseudocode description we denote the reservation of a component $C$ by $r
 	\begin{algorithmic}
 		\STATE \new{$G \gets (\{1,...,n\}, \emptyset, w)$ //\emph{initialize a graph on $n$ nodes without edges, $w$ assigns $0$ to every edge}} \old{initialize an empty graph on $n$ nodes}
 		\STATE turn each of the $n$ nodes into a singleton component
-		\FORALL{$r=\{u,v\}\in\sigma$}
+		\FORALL{$r=\new{((u,v),t)}\old{\{u,v\}}\in\sigma$}
 		
 		\IF{$comp(v)\neq comp(u)$}
 		\STATE $w(\{u,v\})\gets w(\{u,v\})+1$
@@ -547,17 +547,17 @@ We start the analysis with upper bounding the cost of \adjDel{} by introducing s
 We define the set $\del(\sigma)$ as the set of components that were deleted by \adjDel{} during its execution given the input sequence $\sigma$.
 We define the following notions for a deleted component $C\in\del{}(\sigma)$.
 \new{
-Let $\tau(v)$ be the time when $node$ was last turned into a singleton component and $\tau(C)$ be the time at which component $C$ was created. Note that a component can either be created via merges or during the deletion process of another component $B$ when the nodes of $B$ are turned into singletons. If $C$ was one of the components created durung the initialisation of the algorithm the $\tau(C)=0$.}
+Let $\tau(v)$ be the time when the node $v$ was last turned into a singleton component and recall that $\tau(C)$ denotes the time at which component $C$ was created. Note that a component can either be created via merges or during the deletion process of another component $B$ when the nodes of $B$ are turned into singletons. If $C$ was one of the components created durung the initialisation of the algorithm then $\tau(C)=0$.}
 Let $\epoch{}(C)$ denote the (node, time) pairs of nodes in $C$ starting at the time after the time $\tau(node)$ \old{when $node$ was last turned into a singleton component}, i.e. 
 \begin{align*}
 \epoch{}(C)=\bigcup_{\new{v}\old{n}\in nodes(C)}\{\new{v}\old{n}\}\times\{\tau(\new{v}\old{n})+1,...,\tau(C)\}.
 \end{align*}
 
-Note that for $C\in\del(\sigma)$, $\tau(C)$ denotes both the time of the creation as well as the time of deletion of $C$. We can use this definition of a component epoch $\epoch(C)$ to uniquely assign each node to a deleted component $C$ at each point in time $t$ (except for nodes in components that persist until the end of sequence $\sigma$).
+Note that for $C\in\del(\sigma)$, $\tau(C)$ denotes both the time of the creation as well as the time of deletion of $C$ \new{as $C$ is deleted by \adjDel{} right away}. We can use this definition of a component epoch $\epoch(C)$ to uniquely assign each node to a deleted component $C$ at each point in time $t$ (except for nodes in components that persist until the end of sequence $\sigma$).
 We assign all requests to $\epoch(C)$ whose corresponding \new{edges} \old{requests} are deleted because of the deletion of component $C$ and call the set of those requests $\req(C)$.
 We split the requests from $\req{}(C)$ into two sets: $\core(C)$ and $\halo(C)$. $\core(C)$ contains all requests for which both nodes have already been assigned to $C$ at the time of the request, i.e. 
 \begin{align*}
-\core(C)=\{r=\new{(u,v)}\old{\{u,v\}}\in\sigma| (u,\reqTime(r))\in \epoch(C)\text{ and } (v, \reqTime(r))\in \epoch(C)\}.
+\core(C)=\{r=\new{((u,v),t)}\old{\{u,v\}}\in\sigma| (u,\new{t}\old{\reqTime(r)})\in \epoch(C)\text{ and } (v, \new{t}\old{\reqTime(r)})\in \epoch(C)\}.
 \end{align*}
 These are the requests that led to the creation of component $C$ by increasing the connectivity within the corresponding subgraph.
 
@@ -767,7 +767,7 @@ We show the following lower bound on the cost of \opt{} for migrations from $\op
 \begin{lemma}
 	\label{opt_c_mig_req_lemma}
 	\begin{align*}
-	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq |C|/k\cdot\alpha+|R(C)|/k
+	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq \new{\sum_{C\in\del(\sigma)}} |C|/k\cdot\alpha+|R(C)|/k
 	\end{align*}
 \end{lemma}
 
