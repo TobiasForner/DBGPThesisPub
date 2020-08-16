@@ -760,7 +760,7 @@ We start by bounding the total edge weight (the total number of requests) we ass
 	The number of such nodes is hence limited by the server capacity $k$. As we only examine requests from $\mathcal{H}$ we know that none of these requests have led \adjDel{} to perform any merges, hence there were at most $\alpha$ requests between $v$ and any one of the other nodes on its server during the offline interval. This bounds the number of requests assigned to the offline interval by $k\cdot\alpha$.
 \end{proof}
 
-Let $R(C)$ denote the set of requests from $\halo(C)$ that were not assigned to any offline interval for a deleted component $C\in\del(\sigma)$.
+Let $R(C)$ denote the set of requests from $\halo(C)\new{\backslash P}$ that were not assigned to any offline interval for a deleted component $C\in\del(\sigma)$ \new{and that \opt{} does not pay for}.
 We say that a migration of node $v$ at time $t$ in the solution of \opt{} is \textit{contained} in $\epoch(C)$ if $(v,t)\in\epoch(C)$.
 Let $\optmig(C)$ denote the cost of \opt{} due to migrations of nodes from component $C$ that are contained in $\epoch(C)$ and let $\optreq(C)$ denote the cost of \opt{} due to serving requests from $\core(C)$.
 We show the following lower bound on the cost of \opt{} for migrations from $\optmig(C)$ and requests from $\optreq(C)$ for all deleted components $C$.
@@ -768,43 +768,74 @@ We show the following lower bound on the cost of \opt{} for migrations from $\op
 \begin{lemma}
 	\label{opt_c_mig_req_lemma}
 	\begin{align*}
-	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq \new{\sum_{C\in\del(\sigma)}} |C|/k\cdot\alpha+|R(C)|/k
+	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq 1/2\cdot\sum_{C\in\del(\sigma)} |C|/k\cdot\alpha+|R(C)|/k
 	\end{align*}
 \end{lemma}
 
 \begin{proof}
-	For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. Note that the nodes involved in requests from $R(C)$ were not moved by \opt{} during the processing of requests from $R(C)$ until the time of deletion of $C$ as otherwise they would be assigned to an offline interval.
+	For the following part of the proof we fix an arbitrary component $C\in\del{}(\sigma)$. 
+	Note that the nodes involved in requests from $R(C)$ were not moved by \opt{} during the processing of 
+	requests from $R(C)$ until the time of deletion of $C$ as otherwise they would be assigned to an offline interval.
 	
-	The number of nodes contained in $C$ or connected to $C$ via edges representing requests from $R$ is at least $|C|+|R(C)|/\alpha$ since requests from $R(C)$ have not led \adjDel{} to perform any migrations. Because of this fact \opt{} must have placed those nodes on at least $\frac{|C|+|R(C)|/\alpha}{k}$ different servers. As \opt{} does not pay for any requests from $R$ it follows that \opt{} must have placed the nodes from $C$ in $(|C|+|R(C)|/(\alpha k)$ different servers.
+	The number of nodes contained in $C$ or connected to $C$ via edges representing requests 
+	from $R(C)$ is at least $|C|+|R(C)|/\alpha$ since requests from $R(C)$ have not led 
+	\adjDel{} to perform any migrations. Because of this fact \opt{} must have placed those nodes 
+	on at least $\frac{|C|+|R(C)|/\alpha}{k}$ different servers. As \opt{} does not pay for any 
+	requests from $R$ it follows that \opt{} must have placed the nodes from $C$ 
+	in $(|C|+|R(C)|/\alpha)/ k$ different servers.
 	
-	We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. In this case \opt{} must partition a graph containing the nodes from $C$ which are connected via edges representing the requests from $\core(C)$. As stated earlier \opt{} placed those nodes in $(|C|+|R(C)|/(\alpha k)$ different servers at time $\tau(C)$. As \adjDel{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} gives that \opt{} has to cut at least edges of total weight $(|C|+|R(C)|/(\alpha k)\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
+	We first examine the case in which \opt{} does not move any nodes from $C$ during $\epoch(C)$. 
+	In this case \opt{} must partition a graph containing the nodes from $C$ which are connected 
+	via edges representing the requests from $\core(C)$. As stated earlier \opt{} placed those 
+	nodes in $(|C|+|R(C)|/\alpha)/ k$ different servers at time $\tau(C)$. 
+	As \adjDel{} merged component $C$ this graph is $\alpha$-connected and hence \cref{cut_lemma} 
+	gives that \opt{} has to cut at least edges of total weight 
+	$((|C|+|R(C)|/\alpha)/ k)/2\cdot\alpha=1/2\cdot(|C|/k\cdot\alpha+|R(C)|/k)$.
 	
-	For the more general case in which \opt{} may perform node migrations during $\epoch(C)$ we adapt the graph construction from above as follows: we add a vertex representing each (node, time) pair from $\epoch(C)$.
-	We connect each (node, time) pair $p$ with edges of weight $\alpha$ to the pairs of the same node that represent the time step directly before and directly after $p$ (if they exist in the graph). These edges represent the fact that \opt{} may choose to migrate a node between any two time steps in $\epoch(C)$.
-	Additionally we add an edge of weight one for each request $r=\{u,v\}$ from $\core(C)$ by connecting the nodes in the graph that represent the pairs $(u,t)$ and $(v,t)$, respectively. \opt{} once again has to partition this graph into $\frac{|C|+|R(C)|/\alpha}{k}$ parts.
-	Note that we only added edges of weight $\alpha$ to the graph and hence this graph is also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight at least $\frac{|C|+|R(C)|/\alpha}{k}\cdot\alpha=|C|/k\cdot\alpha+|R(C)|/k$.
+	For the more general case in which \opt{} may perform node migrations during $\epoch(C)$ we 
+	adapt the graph construction from above as follows: we add a vertex representing each 
+	(node, time) pair from $\epoch(C)$.
+	We connect each (node, time) pair $p$ with edges of weight $\alpha$ to the pairs of the same 
+	node that represent the time step directly before and directly after $p$ (if they exist in 
+	the graph). These edges represent the fact that \opt{} may choose to migrate a node between 
+	any two time steps in $\epoch(C)$.
+	Additionally we add an edge of weight one for each request $r=\{u,v\}$ from $\core(C)$ by 
+	connecting the nodes in the graph that represent the pairs $(u,t)$ and $(v,t)$, respectively. 
+	\opt{} once again has to partition this graph into $\frac{|C|+|R(C)|/\alpha}{k}$ parts.
+	Note that we only added edges of weight $\alpha$ to the graph and hence this graph is 
+	also $\alpha$-connected. We conclude that once again \opt{} has to cut edges of weight 
+	at least $\frac{|C|+|R(C)|/\alpha}{k}\cdot1/2\cdot\alpha=1/2\cdot(|C|/k\cdot\alpha+|R(C)|/k)$.
 	
-	In both cases only edges representing either requests from $\optreq(C)$ or migrations from $\optmig(C)$ were cut.
-	As the sets $\core(C)$, $R(C)$ , $\core(D)$ and $R(D)$ are disjoint for two different components $C,D\in\del(\sigma)$ per their definition we conclude that
+	In both cases only edges representing either requests from $\optreq(C)$ or migrations 
+	from $\optmig(C)$ were cut.
+	As the sets $\core(C)$, $R(C)$ , $\core(D)$ and $R(D)$ are disjoint for two different 
+	components $C,D\in\del(\sigma)$ per their definition we conclude that
 	\begin{align*}
-	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq |C|/k\cdot\alpha+|R(C)|/k.
+	\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)\geq 1/2\cdot\sum_{C\in\del(\sigma)}|C|/k\cdot\alpha+|R(C)|/k.
 	\end{align*}
 \end{proof}
 
 
-In the following lemma we combine the results of the previous lemmas in order to bound the cost of \opt{} given input sequence $\sigma$, denoted by $\opt(\sigma)$.
+In the following lemma we combine the results of the previous lemmas in 
+order to bound the cost of \opt{} given input sequence $\sigma$, 
+denoted by $\opt(\sigma)$.
 
 
 \begin{lemma}
 	\label{opt_lower_bound}
-	The cost of the solution of \opt{} given input sequence $\sigma$ is bounded by
+	The cost of the solution of \opt{} given input sequence $\sigma$ is 
+	bounded by
 	\begin{align*}
-	\opt{}(\sigma)\geq1/2\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k.
+	\opt{}(\sigma)\geq1/4\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k.
 	\end{align*}
 \end{lemma}
 
 \begin{proof}
-	We combine the results from \cref{offl_int_lemma} and \cref{opt_c_mig_req_lemma}. Note that the cost from \cref{opt_c_mig_req_lemma} may contain migration costs. In this case the corresponding migrations represent the end of an offline interval. We denote the number of offline intervals by $o$. This gives us that
+	We combine the results from \cref{offl_int_lemma} and 
+	\cref{opt_c_mig_req_lemma}. Note that the cost from \cref{opt_c_mig_req_lemma} may 
+	contain migration costs. In this case the corresponding migrations represent the end 
+	of an offline interval. We denote the number of offline intervals by $o$. This gives 
+	us that
 	
 	\begin{align*}
 	2\opt{}(\sigma)\geq\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)+ o\cdot\alpha+|P|
@@ -815,8 +846,8 @@ In the following lemma we combine the results of the previous lemmas in order to
 	
 	\begin{align*}
 	2\opt{}(\sigma)&\geq\sum_{C\in\del(\sigma)}\optmig(C)+\optreq(C)+ o\cdot\alpha+|P|\\
-	&\geq\sum_{C\in\del(\sigma)}|C|/k\cdot\alpha+|R(C)|/k+(|N|+|P|)/k\\
-	&\geq \cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k.
+	&\geq\sum_{C\in\del(\sigma)}1/2\cdot(|C|/k\cdot\alpha+|R(C)|/k)+(|N|+|P|)/k\\
+	&\geq 1/2\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k.
 	\end{align*}
 	
 This completes the proof.
@@ -838,8 +869,8 @@ We can now combine the results of \cref{crep_upper_bound} and \cref{opt_lower_bo
 	\addtolength{\jot}{1em}
 	\begin{align*}
 	&\frac{\adjDel{}(\sigma)-\finalWeights(\sigma)}{\opt(\sigma)}\\ 
-	&\leq\frac{2\cdot\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha +\sum_{C\in\del{}(\sigma)} |\halo(C)|}{1/2\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k +|P|}\\
-	&\leq k \log k\frac{2\cdot\sum_{C\in\del(\sigma)}|C|\cdot(2/\epsilon+1) \cdot\alpha+\sum_{C\in\del{}(\sigma)}|\halo(C)|}{1/2\sum_{(C\in\del{}(\sigma)}|C|\cdot\alpha/2+|\halo(C)|)}+\beta\\
+	&\leq\frac{2\cdot\sum_{C\in\comps(\sigma)}|C|\cdot((2/\epsilon+1)+\log k)\cdot\alpha +\sum_{C\in\del{}(\sigma)} |\halo(C)|}{1/4\cdot\sum_{C\in\del{}(\sigma)}|C|/k\cdot\alpha+|\halo(C)|/k +|P|}\\
+	&\leq k \log k\frac{2\cdot\sum_{C\in\del(\sigma)}|C|\cdot(2/\epsilon+1) \cdot\alpha+\sum_{C\in\del{}(\sigma)}|\halo(C)|}{1/4\sum_{C\in\del{}(\sigma)}(|C|\cdot\alpha/2+|\halo(C)|)}+\beta\\
 	& = O(2/\epsilon\cdot k \log k) +\beta
 	\end{align*}
 	\endgroup
