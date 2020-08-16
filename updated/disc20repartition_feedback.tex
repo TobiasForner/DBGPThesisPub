@@ -635,12 +635,13 @@ We combine our results from \cref{crep_req_bound} and \cref{crep_mig_bound} in t
 \subsection{Lower Bound on \opt{}}
 
 We next bound the cost on \opt{} by assigning cost to \opt{} based on the size of the components $C$ that \adjDel{} deletes and the associated adjacent edges $\halo(C)$ which \adjDel{} resets to zero during the deletion of $C$. In order to achieve this we introduce some additional notions.
-First we define the term \textit{offline interval} of a node $v$ to be the time between two migrations of $v$ in the solution of \opt{}. More specifically an offline interval of node $v$ either starts at time zero (if it is the first offline interval of $v$) or after a migration of $v$ and ends with the next migration of node $v$ that \opt{} performs.
+First we define the term \textit{offline interval} of a node $v$ to be the time between two migrations of $v$ in the solution of \opt{}. More specifically \new{let $\mathcal{T}(v)=(t_0,t_1,t_2,...)$ denote the ordered sequence of the times at which \opt{} migrates node $v$ with the addition of $t_0=0$ such that
+ for all $i$, $t_i<t_{i+1}$ if $t_i,t_{i+1}\in\mathcal{T}(v)$. Then an offline interval $(t_i,t_{i+1}]$ of node $v$ is defined by every two subsequent times in $\mathcal{T}(v)$.} \old{an offline interval of node $v$ either starts at time zero (if it is the first offline interval of $v$) or after a migration of $v$ and ends with the next migration of node $v$ that \opt{} performs.}
 
-Furthermore we say that an offline interval is contained in the epoch $\epoch(C)$ of a component $C\in\del{}(\sigma)$ if it ends before the time $\tau(C)$. 
+Furthermore we say that an offline interval \new{$(t_i,t_{i+1}]$ of node $v\in C$ }is contained in the epoch $\epoch(C)$ of a component $C\in\del{}(\sigma)$ if it ends before the time $\tau(C)$\new{, i.e. if $t_{i+1}<\tau(C)$}. 
 Note that $\tau(C)$ is both the time of the creation of $C$ in the solution of \adjDel{} and the time of its deletion as $C\in\del{}(\sigma)$.
-We assign a request $r$ involving the node $v$ to an offline interval of $v$ if it is both the first offline interval of one of the end points of $r$ 
-that ends and if the offline interval ends before the deletion of the edge representing $r$ due to a component deletion.
+We assign a request $r$ involving the node\new{s} $v$ \new{and $u$} to an offline interval \new{$I=(t_i,t_{i+1}]$} of $v$ if \new{$\tau(r)\in I$ and if }it is both the first offline interval of one of the end points of $r$ 
+that ends and if the offline interval ends before the deletion of the edge representing $r$ due to a component deletion\new{, i.e. let $\hat{t}$ be the time of the component deletion that deletes the edge corresponding to $r$ and $(t_j,t_{j+1}])$ be the offline interval of node $u$ that contains $\tau(r)$, then $t_{i+1}<\hat{t}$ and $t_{i+1}<t_{j+1}$}.
 The requests from $\mathcal{H}=\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that are not assigned to any offline interval are then those which are deleted 
 due to the deletion of a component that took place before the corresponding offline interval ended.
 Let $P$ denote the set of edges from $\bigcup_{C\in\del{}(\sigma)}\halo{}(C)$ that both \adjDel{} and \opt{} pay for and let $I$ denote the set of requests 
@@ -1568,7 +1569,7 @@ The influence of $\alpha$ on the running time is investigated further in \cref{s
 
 We evaluate the running time of \adjDel{} by considering different traces 
 and alternative algorithms. 
-	\begin{figure}[h]
+	\begin{figure}[ht]
 		\centering
 		\begin{minipage}{0.48\linewidth}
 			\begin{subfigure}[b]{\linewidth}
@@ -1674,7 +1675,7 @@ by the fact that \directDecomp{} is significantly faster for \fb{} as one can se
 \cref{fig:all_runtimes_boxplot}.
 
 \label{sec:alpha_influence}
-\begin{figure}[h]
+\begin{figure}[ht]
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}{\linewidth}
 			\includegraphics[height=6cm]{boxplot_varying_alphas_mocfe_decompTree}
@@ -1720,7 +1721,7 @@ as the update times may increase.
 In order to shed light on the cost, in terms of communication 
 and migration, we compare our algorithms \adjDel{} and \coreDel{} with \static{}.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 	\centering
 	\begin{minipage}{0.48\linewidth}
 		\begin{subfigure}[b]{\linewidth}
