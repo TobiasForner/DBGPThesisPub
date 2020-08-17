@@ -473,10 +473,10 @@ component set reaches connectivity $\alpha$, while prior approaches do so once t
 		\STATE move all nodes to the server of $C$, freeing reservations and capacity
 		\STATE $res(C_{merged})\gets res(C)-(|C_{merged}|-|C|)$
 		\ELSE
-		\STATE $target\gets$ $server$ s.t. $cap(server)\geq \min\{k, (1+\epsilon)|C_{merged}|\}$
-		\STATE move all nodes from $X$ to $server$, freeing reservations and capacity
-		\STATE $cap(server)\gets cap(server)-\min\{k, (1+\epsilon)|C_{merged}|\}$
-		\STATE $res(C_{merged})\gets\min\{k, \epsilon|C_{merged}|\}$
+		\STATE $target\gets$ $server$ s.t. $cap(server)\geq \min\{k, (1+\epsilon)\cdot|C_{merged}|\}$
+		\STATE move all nodes from $X$ to $target$, freeing reservations and capacity
+		\STATE $cap(target)\gets cap(target)-\min\{k, (1+\epsilon)\cdot|C_{merged}|\}$
+		\STATE $res(C_{merged})\gets\min\{k-|C_{merged}|, \epsilon\cdot|C_{merged}|\}$
 		\ENDIF
 	\end{algorithmic}
 \end{algorithm}
