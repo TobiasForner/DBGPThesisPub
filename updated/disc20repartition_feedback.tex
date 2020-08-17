@@ -464,7 +464,32 @@ component set reaches connectivity $\alpha$, while prior approaches do so once t
 	\end{algorithmic}
 \end{algorithm}
 
-\adjDel{} resets all the edges contained in the deleted component $C$ and also resets the weights of edges \textit{adjacent} to $C$, i.e. all edges $e=\{u,v\}$ are reset to zero if $u$ or $v$ were contained in component $C$ at the time of its deletion. The deletion method is also described in pseudocode in \cref{adj_del_alg}.
+\begin{algorithm}
+	\caption{collocate($X$)}
+	\label{alg:collocate}
+	\begin{algorithmic}
+		\STATE $C_{merged}\gets\bigcup_{C\in X} C$
+		\IF{$\exists C\in X$ s.t. $res(C)>= |C|-|X|$}
+		\STATE move all nodes to the server of $C$, freeing reservations and capacity
+		\STATE $res(C_{merged})\gets res(C)-(|C_{merged}|-|C|)$
+		\ELSE
+		\STATE $target\gets$ $server$ s.t. $cap(server)\geq \min\{k, (1+\epsilon)|C_{merged}|\}$
+		\STATE move all nodes from $X$ to $server$, freeing reservations and capacity
+		\STATE $cap(server)\gets cap(server)-\min\{k, (1+\epsilon)|C_{merged}|\}$
+		\STATE $res(C_{merged})\gets\min\{k, \epsilon|C_{merged}|\}$
+		\ENDIF
+	\end{algorithmic}
+\end{algorithm}
+
+\adjDel{} resets all the edges contained in the deleted component $C$ and also resets the 
+weights of edges \textit{adjacent} to $C$, i.e. all edges $e=\{u,v\}$ are reset to zero 
+if $u$ or $v$ were contained in component $C$ at the time of its deletion. The deletion
+method is also described in pseudocode in \cref{adj_del_alg}.
+Additionally, \cref{alg:collocate} describes the collocation procedure that first tries 
+to find a component such that the remaining ones that are to be merged fit into its 
+existing reservation (if-case). If this is not possible all the components that are to 
+be merged are moved to a new server with enough space for the resulting merged component 
+$C_{merged}$ as well as the additional reservation of $\min\{k, \epsilon|C_{merged}|\}$.
 Furthermore the merge and deletion process is illustrated in \cref{exOldCrep}.
 
 As we will see, the idea for the competitive analysis is to relate the cost of both \opt{} and \adjDel{} to the deleted components in the solution of \adjDel{}.
