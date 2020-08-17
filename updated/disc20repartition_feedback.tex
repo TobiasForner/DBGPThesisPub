@@ -469,7 +469,7 @@ component set reaches connectivity $\alpha$, while prior approaches do so once t
 	\label{alg:collocate}
 	\begin{algorithmic}
 		\STATE $C_{merged}\gets\bigcup_{C\in X} C$
-		\IF{$\exists C\in X$ s.t. $res(C)>= |C|-|X|$}
+		\IF{$\exists C\in X$ s.t. $res(C)>= |C_{merged}|-|C|$}
 		\STATE move all nodes to the server of $C$, freeing reservations and capacity
 		\STATE $res(C_{merged})\gets res(C)-(|C_{merged}|-|C|)$
 		\ELSE
